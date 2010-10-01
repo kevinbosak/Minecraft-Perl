@@ -11,4 +11,10 @@ has '+tag_type' => (
     default => 9,
 );
 
+has 'subtag_type' => (
+    is => 'rw',
+    isa => 'Int',
+    default => '',
+);
+
 1;

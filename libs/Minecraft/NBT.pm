@@ -154,6 +154,7 @@ sub parse_from_fh { # TOOD: make this more generic?
     } elsif (type_to_string($tag_type) eq 'TAG_LIST') {
         my $id_data = parse_from_fh({fh => $fh, tag_type => string_to_type('TAG_BYTE')});
         my $id = $id_data->payload;
+        $tag_data->{subtag_type} = $id;
 
         my $length_data = parse_from_fh({fh => $fh, tag_type => string_to_type('TAG_INT')});
         my $length = $length_data->payload;
@@ -214,7 +215,76 @@ sub as_string {
     return $string;
 }
 
+# returns the raw bits to write to an nbt file
 sub as_nbt {
+    my $self = shift;
+
+    my $return = '';
+    # write name and tag type if this is a named tag
+    if (defined $self->name) {
+        # write the type
+        $return .= Minecraft::NBT::Byte->new({payload => $self->tag_type})->as_nbt;
+        # write the name
+        $return .= Minecraft::NBT::String->new({payload => $self->name})->as_nbt;
+    }
+
+    # now for the payload
+    if (type_to_string($self->tag_type) eq 'TAG_BYTE') {
+        $return .= pack('c', $self->payload);
+
+    } elsif (type_to_string($self->tag_type) eq 'TAG_SHORT') {
+        $return .= pack('s>', $self->payload);
+
+    } elsif (type_to_string($self->tag_type) eq'TAG_INT') {
+        $return .= pack('l>', $self->payload);
+
+    } elsif (type_to_string($self->tag_type) eq 'TAG_LONG') {
+        $return .= pack('q>', $self->payload);
+
+    } elsif (type_to_string($self->tag_type) eq 'TAG_FLOAT') {
+        $return .= pack('f>', $self->payload);
+
+    } elsif (type_to_string($self->tag_type) eq 'TAG_DOUBLE') {
+        $return .= pack('d>', $self->payload);
+
+    } elsif (type_to_string($self->tag_type) eq 'TAG_BYTE_ARRAY') {
+        # length
+        my $length = $self->payload ? scalar @{$self->payload} : 0;
+        $return .= Minecraft::NBT::Int->new({payload => $length})->as_nbt;
+
+        # payload
+        for my $byte (@{$self->payload}) {
+            $return .= $byte->as_nbt;
+        }
+
+    } elsif (type_to_string($self->tag_type) eq 'TAG_STRING') {
+        my $payload = Encode::encode('UTF-8', $self->payload);
+        # length
+#        my $payload = $self->payload;
+        $return .= Minecraft::NBT::Short->new({payload => length($payload)})->as_nbt;
+
+        $return .= $payload;
+
+    } elsif (type_to_string($self->tag_type) eq 'TAG_LIST') {
+        $return .= Minecraft::NBT::Byte->new({payload => $self->subtag_type})->as_nbt;
+
+        my $length = $self->payload ? scalar @{$self->payload} : 0;
+        $return .= Minecraft::NBT::Int->new({payload => $length})->as_nbt;
+
+        my @tags = ();
+        for my $tag (@{$self->payload}) {
+            $return .= $tag->as_nbt;
+        }
+
+    } elsif (type_to_string($self->tag_type) eq 'TAG_COMPOUND') {
+        # only give payload
+        for my $named_tag (@{$self->payload}) {
+            $return .= $named_tag->as_nbt;
+        }
+        $return .= Minecraft::NBT::Byte->new({payload => string_to_type('TAG_END')})->as_nbt;
+    }
+
+    return $return;
 }
 
 1;
