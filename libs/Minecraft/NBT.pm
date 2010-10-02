@@ -1,6 +1,8 @@
 package Minecraft::NBT;
 
-use Moose;
+use Minecraft::Util;
+
+use Mouse;
 use Readonly;
 use Data::Dumper;
 use Encode;
@@ -180,7 +182,20 @@ sub parse_from_fh { # TOOD: make this more generic?
     return $tag_obj;
 }
 
-# To be overridden 
+sub parse_from_file {
+    my $args = shift;
+    if (!ref $args) {
+        $args = shift;
+    }
+    my $filename = delete $args->{file} if $args;
+    die "No file given" unless $filename;
+    die "File not found" unless -e $filename;
+
+    $args->{fh} = Minecraft::Util::get_read_fh($filename);
+    my $return = parse_from_fh($args);
+    close $args->{fh};
+    return $return;
+}
 
 sub as_string {
     my $self = shift;

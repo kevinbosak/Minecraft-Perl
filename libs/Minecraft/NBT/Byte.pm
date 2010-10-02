@@ -1,6 +1,6 @@
 package Minecraft::NBT::Byte;
 
-use Moose;
+use Mouse;
 extends 'Minecraft::NBT';
 
 has '+tag_type' => (

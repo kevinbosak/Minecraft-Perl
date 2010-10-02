@@ -1,6 +1,6 @@
 package Minecraft::NBT::Float;
 
-use Moose;
+use Mouse;
 extends 'Minecraft::NBT';
 
 has '+payload' => (

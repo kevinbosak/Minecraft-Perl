@@ -1,6 +1,6 @@
 package Minecraft::NBT::String;
 
-use Moose;
+use Mouse;
 extends 'Minecraft::NBT';
 
 has '+payload' => (
