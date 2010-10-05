@@ -1,6 +1,5 @@
 #!/usr/bin/perl
 
-use lib 'libs';
 use Minecraft::NBT;
 use Minecraft::Util;
 

@@ -4,7 +4,8 @@ use Mouse;
 extends 'Minecraft::NBT';
 
 has '+payload' => (
-    isa =>  => 'Maybe[ArrayRef]',
+    isa => 'Maybe[ArrayRef]',
+    default => sub { return []},
 );
 
 has '+tag_type' => (

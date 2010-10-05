@@ -66,7 +66,7 @@ sub type_to_string {
 }
 
 # pulls the nbt raw data from an open filehandle and converts it to objects
-sub parse_from_fh { # TOOD: make this more generic?
+sub parse_from_fh {
     my $args = shift;
     if (!ref $args) {
         $args = shift;
@@ -219,7 +219,7 @@ sub as_string {
         $string .= "\n${leader}{";
 
         for my $obj (@{$self->payload}) {
-           $string .= "\n${leader}" . $obj->as_string($leader . '    ');
+           $string .= "\n" . $obj->as_string($leader . '    ');
         }
 
         $string .= "\n${leader}}";

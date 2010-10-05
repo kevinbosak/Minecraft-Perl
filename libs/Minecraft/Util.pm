@@ -2,11 +2,11 @@ package Minecraft::Util;
 
 sub get_read_fh {
     my $filename = shift;
-    require PerlIO::gzip;
 
-    if ($filename eq __PACKAGE__) {
-        $filename = shift;
-    }
+    $filename = shift if ($filename eq __PACKAGE__);
+    die "No file given" unless $filename;
+
+    require PerlIO::gzip;
 
     my $FH;
     open $FH, "<:gzip", $filename or die $!;
@@ -15,9 +15,11 @@ sub get_read_fh {
 
 sub get_write_fh {
     my $filename = shift;
-    $filename = shift if $filename eq __PACKAGE__;
 
+    $filename = shift if $filename eq __PACKAGE__;
     die "No file given" unless $filename;
+
+    require PerlIO::gzip;
 
     my $FH;
     open $FH, ">:gzip", $filename or die $!;
