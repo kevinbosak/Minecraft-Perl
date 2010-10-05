@@ -192,6 +192,7 @@ sub parse_from_file {
     die "File not found" unless -e $filename;
 
     $args->{fh} = Minecraft::Util::get_read_fh($filename);
+    $args->{is_named} = 1;
     my $return = parse_from_fh($args);
     close $args->{fh};
     return $return;
@@ -303,3 +304,98 @@ sub as_nbt {
 }
 
 1;
+
+=head1 NAME
+
+Minecraft::NBT - Tag base class for Minecraft NBT files.
+
+=head1 VERSION
+
+This documentation refers to Minecraft::NBT version $Revision$
+
+=head1 SYNOPSIS
+
+    use Minecraft::NBT;
+
+    my $root_tag = Minecraft::NBT::parse_from_file({file => 'world/local.dat'});
+    print $root_tag->name . "\n"; # root tag is named but the name is generally empty
+    print $root_tag->as_string . "\n";
+    print Minecraft::NBT::type_to_string($root_tag->tag_type) . "\n";
+    my $data = $nbt->payload; # can be other NBT tags or string/int/etc. depending on the type of tag
+
+
+=head1 DESCRIPTION
+
+This module is the base class for all NBT tag objects.  It also includes several
+helper functions for reading NBT data and parsing it into tag objects. This class
+is subclassed by the various NBT data types.
+
+=head1 SUBROUTINES
+
+=head2 parse_from_file({file => $filename})
+=head2 parse_from_fh({fh => $filehandle, is_named => 1, tag_type => 1})
+
+Parses and returns the root NBT tag for the data in the given NBT file. parse_from_fh can optionally 
+take 'is_named' and 'tag_type' to tell whether the next tag in the stream is a named tag and what
+type it is.
+
+=head2 types_hash
+
+Returns a hash of NBT data types with the keys being the data type value and the values being
+a string representation.
+
+=head2 string_to_type($string)
+=head2 type_to_type($type)
+
+Convert to/from the human-readable strings and NBT codes for data types.
+
+=head1 ATTRIBUTES
+
+=head2 name
+
+The name of the tag, if this is a named tag
+
+=head2 tag_type
+
+The NBT code for the tag type
+
+=head2 payload
+
+The tag's payload, which can be another NBT tag, an arrayref of tags, or a scalar.
+
+=head1 OBJECT METHODS
+
+=head2 as_string
+
+Returns a string representation of the NBT tag and its children, if any.
+
+=head2 as_nbt
+
+Returns the binary representation of the NBT tag and its children, if any. Use
+this for writing to a file
+
+=head1 SEE ALSO
+
+Minecraft::NBT::Byte
+
+Minecraft::NBT::Short
+
+Minecraft::NBT::Int
+
+Minecraft::NBT::Long
+
+Minecraft::NBT::Double
+
+Minecraft::NBT::Float
+
+Minecraft::NBT::String
+
+Minecraft::NBT::Compound
+
+Minecraft::NBT::List
+
+Minecraft::NBT::ByteArray
+
+=head1 AUTHOR
+
+Kevin Bosak
