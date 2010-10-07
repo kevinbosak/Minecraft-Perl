@@ -5,7 +5,6 @@ use Minecraft::Util;
 use Mouse;
 use Readonly;
 use Data::Dumper;
-use Encode;
 
 has 'name' => (
     is => 'rw',
@@ -151,7 +150,8 @@ sub parse_from_fh {
 
         my $payload_data;
         read($fh, $payload_data, $length);
-        $payload = Encode::decode('UTF-8', $payload_data);
+        $payload = $payload_data;
+        utf8::upgrade($payload);
 
     } elsif (type_to_string($tag_type) eq 'TAG_LIST') {
         my $id_data = parse_from_fh({fh => $fh, tag_type => string_to_type('TAG_BYTE')});
@@ -274,10 +274,12 @@ sub as_nbt {
         }
 
     } elsif (type_to_string($self->tag_type) eq 'TAG_STRING') {
-        my $payload = Encode::encode('UTF-8', $self->payload);
+        my $payload = $self->payload;
+        utf8::downgrade($payload);
+        my $length = length($self->payload);
+
         # length
-#        my $payload = $self->payload;
-        $return .= Minecraft::NBT::Short->new({payload => length($payload)})->as_nbt;
+        $return .= Minecraft::NBT::Short->new({payload => $length})->as_nbt;
 
         $return .= $payload;
 
