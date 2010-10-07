@@ -19,7 +19,8 @@ sub load_chunk_from_file {
 
     my $full_path = "$path/" . get_chunk_path($args);
     my $nbt = Minecraft::NBT::parse_from_file({file => $full_path, is_named => 1});
-    return $nbt->payload->[0];
+    my $level = $nbt->payload->[0];
+    return Minecraft::Map::Chunk->new({chunk_nbt_data => $level});
 }
 
 sub get_chunk_path {

@@ -17,19 +17,19 @@ has 'path' => (
 
 has 'time' => (
     is => 'rw',
-    isa => 'Minecraft::NBT::Long',
+    isa => 'Int',
     default => sub { 
         my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('Time') if $self->level_nbt_data;},
+        return $self->level_nbt_data->get_child_by_name('Time')->payload if $self->level_nbt_data;},
     lazy => 1,
 );
 
 has 'last_played' => (
     is => 'rw',
-    isa => 'Minecraft::NBT::Long',
+    isa => 'Int',
     default => sub { 
         my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('LastPlayed') if $self->level_nbt_data},
+        return $self->level_nbt_data->get_child_by_name('LastPlayed')->payload if $self->level_nbt_data},
     lazy => 1,
 );
 
@@ -38,61 +38,61 @@ has 'player' => (
     isa => 'Minecraft::Entity::Mob::Player',
     default => sub { 
         my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('Player') if $self->level_nbt_data},
+        return $self->level_nbt_data->get_child_by_name('Player')->payload if $self->level_nbt_data},
     lazy => 1,
 );
 
 has 'spawn_x' => (
     is => 'rw',
-    isa => 'Minecraft::NBT::Int',
+    isa => 'Int',
     default => sub { 
         my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('SpawnX') if $self->level_nbt_data},
+        return $self->level_nbt_data->get_child_by_name('SpawnX')->payload if $self->level_nbt_data},
     lazy => 1,
 );
 
 has 'spawn_y' => (
     is => 'rw',
-    isa => 'Minecraft::NBT::Int',
+    isa => 'Int',
     default => sub { 
         my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('SpawnY') if $self->level_nbt_data},
+        return $self->level_nbt_data->get_child_by_name('SpawnY')->payload if $self->level_nbt_data},
     lazy => 1,
 );
 
 has 'spawn_z' => (
     is => 'rw',
-    isa => 'Minecraft::NBT::Int',
+    isa => 'Int',
     default => sub { 
         my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('SpawnZ') if $self->level_nbt_data},
+        return $self->level_nbt_data->get_child_by_name('SpawnZ')->payload if $self->level_nbt_data},
     lazy => 1,
 );
 
 has 'size_on_disk' => (
     is => 'rw',
-    isa => 'Minecraft::NBT::Long',
+    isa => 'Int',
     default => sub { 
         my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('SizeOnDisk') if $self->level_nbt_data},
+        return $self->level_nbt_data->get_child_by_name('SizeOnDisk')->payload if $self->level_nbt_data},
     lazy => 1,
 );
 
 has 'random_seed' => (
     is => 'rw',
-    isa => 'Minecraft::NBT::Long',
+    isa => 'Int',
     default => sub { 
         my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('RandomSeed') if $self->level_nbt_data},
+        return $self->level_nbt_data->get_child_by_name('RandomSeed')->payload if $self->level_nbt_data},
     lazy => 1,
 );
 
 has 'snow_covered' => (
     is => 'rw',
-    isa => 'Minecraft::NBT::Byte',
+    isa => 'Bool',
     default => sub { 
         my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('SnowCovered') if $self->level_nbt_data},
+        return $self->level_nbt_data->get_child_by_name('SnowCovered')->payload if $self->level_nbt_data},
     lazy => 1,
 );
 
