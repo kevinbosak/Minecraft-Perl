@@ -21,7 +21,7 @@ has 'blocks' => (
             my $self = shift;
             if (my $chunk_data = $self->chunk_nbt_data) {
                 my $block_data = $chunk_data->get_child_by_name('Blocks')->payload;
-                my @blocks = vec($block_data, 0, 8);
+                my @blocks = unpack('C*', $block_data);
                 return \@blocks;
             }
         },
@@ -35,7 +35,7 @@ has 'data' => (
             my $self = shift;
             if (my $chunk_data = $self->chunk_nbt_data) {
                 my $block_data = $chunk_data->get_child_by_name('Data')->payload;
-                my @blocks = vec($block_data, 0, 4);
+                my @blocks = unpack('C*', $block_data);
                 return \@blocks;
             }
         },
@@ -49,7 +49,7 @@ has 'sky_light' => (
             my $self = shift;
             if (my $chunk_data = $self->chunk_nbt_data) {
                 my $block_data = $chunk_data->get_child_by_name('SkyLight')->payload;
-                my @blocks = vec($block_data, 0, 4);
+                my @blocks = unpack('(B4)*', $block_data);
                 return \@blocks;
             }
         },
@@ -63,7 +63,7 @@ has 'block_light' => (
             my $self = shift;
             if (my $chunk_data = $self->chunk_nbt_data) {
                 my $block_data = $chunk_data->get_child_by_name('BlockLight')->payload;
-                my @blocks = vec($block_data, 0, 4);
+                my @blocks = unpack('(B4)*', $block_data);
                 return \@blocks;
             }
         },
@@ -77,7 +77,7 @@ has 'height_map' => (
             my $self = shift;
             if (my $chunk_data = $self->chunk_nbt_data) {
                 my $block_data = $chunk_data->get_child_by_name('HeightMap')->payload;
-                my @blocks = vec($block_data, 0, 8);
+                my @blocks = unpack('C*', $block_data);
                 return \@blocks;
             }
         },
@@ -138,7 +138,7 @@ has 'terrain_populated' => (
     default => sub {
             my $self = shift;
             if (my $chunk_data = $self->chunk_nbt_data) {
-                return $chunk_data->get_child_by_name('zPos')->payload;
+                return $chunk_data->get_child_by_name('TerrainPopulated')->payload;
             }
             return 0;
         },

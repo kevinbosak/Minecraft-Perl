@@ -139,14 +139,8 @@ sub parse_from_fh {
 
         my $payload_data;
         read($fh, $payload_data, $length);
-#        ($payload) = unpack("B$length", $payload_data);
-        ($payload) = unpack("B*", $payload_data);
-#        my @bytes = ();
-#        for (1..$length) {
-#            my $byte = parse_from_fh({fh => $fh, tag_type => string_to_type('TAG_BYTE')});
-#            push @bytes, $byte;
-#        }
-#        $payload = \@bytes;
+        $payload = $payload_data;
+#        ($payload) = unpack("B*", $payload_data);
 
     } elsif (type_to_string($tag_type) eq 'TAG_STRING') {
         my $length_data = parse_from_fh({fh => $fh, tag_type => string_to_type('TAG_SHORT')});
@@ -274,12 +268,10 @@ sub as_nbt {
         $length /= 8;
         $return .= Minecraft::NBT::Int->new({payload => $length})->as_nbt;
 
-        my $payload = $self->payload;
-        $return .= pack("B*", $payload);
         # payload
-#        for my $byte (@{$self->payload}) {
-#            $return .= $byte->as_nbt;
-#        }
+        my $payload = $self->payload;
+        $return .= $payload;
+#        $return .= pack("B*", $payload);
 
     } elsif (type_to_string($self->tag_type) eq 'TAG_STRING') {
         my $payload = $self->payload;
