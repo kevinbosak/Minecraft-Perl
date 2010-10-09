@@ -5,6 +5,7 @@ use Minecraft::Util;
 use Mouse;
 use Readonly;
 use Data::Dumper;
+use Math::BigInt;
 
 has 'name' => (
     is => 'rw',
@@ -120,8 +121,18 @@ sub parse_from_fh {
 
     } elsif (type_to_string($tag_type) eq 'TAG_LONG') {
         my $payload_data;
-        read($fh, $payload_data, 8);
-        ($payload) = unpack('q>', $payload_data);
+#        read($fh, $payload_data, 8);
+#        ($payload) = unpack('q>', $payload_data);
+        my $byte_string = '';
+        my @bytes = ();
+        for (1..8) {
+            my $byte;
+            read($fh, $byte, 1);
+	    my ($byte_string) = unpack('B*', $byte);
+            push @bytes, $byte_string;
+        }
+#        read($fh, $payload_data, 8);
+        $payload = Math::BigInt->new('0b' . join('', @bytes));
 
     } elsif (type_to_string($tag_type) eq 'TAG_FLOAT') {
         my $payload_data;
@@ -211,7 +222,7 @@ sub as_string {
     }
     $string .= ': ';
     
-    if (ref $self->payload) {
+    if (ref $self->payload && ref $self->payload eq 'ARRAY') {
         my $length = scalar @{$self->payload};
         $string .= "$length entries";
 
@@ -253,7 +264,21 @@ sub as_nbt {
         $return .= pack('l>', $self->payload);
 
     } elsif (type_to_string($self->tag_type) eq 'TAG_LONG') {
-        $return .= pack('q>', $self->payload);
+#        $return .= pack('q>', $self->payload);
+        my $byte_string = $self->payload->as_bin;
+
+        substr($byte_string, 0, 2, '');
+        # zero-pad
+        if (my $diff = 64 - length($byte_string)) {
+            my $string = ('0') x $diff;
+            $byte_string = $string . $byte_string;
+        }
+
+        my @bytes = ();
+        while (length($byte_string)) {
+            my $byte = substr($byte_string, 0, 8, '');
+	    $return .= pack('B*', $byte);
+        }
 
     } elsif (type_to_string($self->tag_type) eq 'TAG_FLOAT') {
         $return .= pack('f>', $self->payload);
