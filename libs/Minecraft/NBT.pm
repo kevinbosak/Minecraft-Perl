@@ -288,15 +288,12 @@ sub as_nbt {
 
     } elsif (type_to_string($self->tag_type) eq 'TAG_BYTE_ARRAY') {
         # length
-#        my $length = $self->payload ? scalar @{$self->payload} : 0;
         my $length = $self->payload ? length $self->payload : 0;
-        $length /= 8;
         $return .= Minecraft::NBT::Int->new({payload => $length})->as_nbt;
 
         # payload
         my $payload = $self->payload;
         $return .= $payload;
-#        $return .= pack("B*", $payload);
 
     } elsif (type_to_string($self->tag_type) eq 'TAG_STRING') {
         my $payload = $self->payload;
