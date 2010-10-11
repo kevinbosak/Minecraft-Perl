@@ -1,0 +1,15 @@
+This is a collection of perl libraries that can be used to read, write
+and manipulate data files from the game Minecraft (see http://minecraft.net).
+
+Currently, the dependencies are as follows (I probably forgot some):
+PerlIO::gzip
+Mouse
+Perl 5.9 (due to how I'm using pack/unpack)
+
+Right now this project is quite incomplete and usage may change as it's
+developed more.  However, you can currently read/write NBT files and mess
+with map chunks a bit.  I've successfully modified both the level.dat
+and chunk files.
+
+If you have any issues, questions, or contributions, please Kevin Bosak at
+kevin@bosak.net.
