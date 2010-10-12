@@ -25,6 +25,13 @@ has 'blocks' => (
                 return \@blocks;
             }
         },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $chunk_data = $self->chunk_nbt_data) {
+                my $block_data = pack('C*', @$new_val);
+	            $chunk_data->get_child_by_name('Blocks')->payload($block_data);
+            }
+        },
     lazy => 1,
 );
 
@@ -35,8 +42,17 @@ has 'data' => (
             my $self = shift;
             if (my $chunk_data = $self->chunk_nbt_data) {
                 my $block_data = $chunk_data->get_child_by_name('Data')->payload;
-                my @blocks = unpack('C*', $block_data);
+                my $block_string = unpack('H*', $block_data);
+                my @blocks = split('', $block_string);
                 return \@blocks;
+            }
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $chunk_data = $self->chunk_nbt_data) {
+                my @blocks = join('', @$new_val);
+                my $block_data = pack('H*', @blocks);
+	            $chunk_data->get_child_by_name('Data')->payload($block_data);
             }
         },
     lazy => 1,
@@ -44,13 +60,22 @@ has 'data' => (
 
 has 'sky_light' => (
     is => 'rw',
-    isa => 'ArrayRef[Int]',
+    isa => 'ArrayRef[Str]',
     default => sub { 
             my $self = shift;
             if (my $chunk_data = $self->chunk_nbt_data) {
                 my $block_data = $chunk_data->get_child_by_name('SkyLight')->payload;
-                my @blocks = unpack('(B4)*', $block_data);
+                my $block_string = unpack('H*', $block_data);
+                my @blocks = split('', $block_string);
                 return \@blocks;
+            }
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $chunk_data = $self->chunk_nbt_data) {
+                my @blocks = join('', @$new_val);
+                my $block_data = pack('H*', @blocks);
+	            $chunk_data->get_child_by_name('SkyLight')->payload($block_data);
             }
         },
     lazy => 1,
@@ -63,8 +88,17 @@ has 'block_light' => (
             my $self = shift;
             if (my $chunk_data = $self->chunk_nbt_data) {
                 my $block_data = $chunk_data->get_child_by_name('BlockLight')->payload;
-                my @blocks = unpack('(B4)*', $block_data);
+                my $block_string = unpack('H*', $block_data);
+                my @blocks = split('', $block_string);
                 return \@blocks;
+            }
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $chunk_data = $self->chunk_nbt_data) {
+                my @blocks = join('', @$new_val);
+                my $block_data = pack('H*', @blocks);
+	            $chunk_data->get_child_by_name('BlockLight')->payload($block_data);
             }
         },
     lazy => 1,
@@ -79,6 +113,13 @@ has 'height_map' => (
                 my $block_data = $chunk_data->get_child_by_name('HeightMap')->payload;
                 my @blocks = unpack('C*', $block_data);
                 return \@blocks;
+            }
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $chunk_data = $self->chunk_nbt_data) {
+                my $block_data = pack('C*', @$new_val);
+	            $chunk_data->get_child_by_name('HeightMap')->payload($block_data);
             }
         },
     lazy => 1,

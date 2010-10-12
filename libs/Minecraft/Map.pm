@@ -1,6 +1,6 @@
 package Minecraft::Map;
 
-use Minecraft::Map::Util;
+use Minecraft::Util;
 
 use Mouse;
 
@@ -8,6 +8,7 @@ use Mouse;
 has 'level_nbt_data' => (
     is => 'rw',
     isa => 'Maybe[Minecraft::NBT]',
+    # TODO: make this required?
 );
 
 has 'path' => (
@@ -19,8 +20,13 @@ has 'time' => (
     is => 'rw',
     isa => 'Int',
     default => sub { 
-        my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('Time')->payload if $self->level_nbt_data;},
+            my $self = shift;
+            return $self->level_nbt_data->get_child_by_name('Time')->payload;
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            $self->level_nbt_data->get_child_by_name('Time')->payload($new_val);
+        },
     lazy => 1,
 );
 
@@ -28,8 +34,13 @@ has 'last_played' => (
     is => 'rw',
     isa => 'Int',
     default => sub { 
-        my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('LastPlayed')->payload if $self->level_nbt_data},
+            my $self = shift;
+            return $self->level_nbt_data->get_child_by_name('LastPlayed')->payload;
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            $self->level_nbt_data->get_child_by_name('LastPlayed')->payload($new_val);
+        },
     lazy => 1,
 );
 
@@ -37,8 +48,13 @@ has 'player' => (
     is => 'rw',
     isa => 'Minecraft::Entity::Mob::Player',
     default => sub { 
-        my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('Player')->payload if $self->level_nbt_data},
+            my $self = shift;
+            return $self->level_nbt_data->get_child_by_name('Player')->payload;
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            $self->level_nbt_data->get_child_by_name('Player')->payload($new_val);
+        },
     lazy => 1,
 );
 
@@ -46,8 +62,13 @@ has 'spawn_x' => (
     is => 'rw',
     isa => 'Int',
     default => sub { 
-        my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('SpawnX')->payload if $self->level_nbt_data},
+            my $self = shift;
+            return $self->level_nbt_data->get_child_by_name('SpawnX')->payload;
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            $self->level_nbt_data->get_child_by_name('SpawnX')->payload($new_val);
+        },
     lazy => 1,
 );
 
@@ -55,8 +76,13 @@ has 'spawn_y' => (
     is => 'rw',
     isa => 'Int',
     default => sub { 
-        my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('SpawnY')->payload if $self->level_nbt_data},
+            my $self = shift;
+            return $self->level_nbt_data->get_child_by_name('SpawnY')->payload;
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            $self->level_nbt_data->get_child_by_name('SpawnY')->payload($new_val);
+        },
     lazy => 1,
 );
 
@@ -64,8 +90,13 @@ has 'spawn_z' => (
     is => 'rw',
     isa => 'Int',
     default => sub { 
-        my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('SpawnZ')->payload if $self->level_nbt_data},
+            my $self = shift;
+            return $self->level_nbt_data->get_child_by_name('SpawnZ')->payload;
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            $self->level_nbt_data->get_child_by_name('SpawnZ')->payload($new_val);
+        },
     lazy => 1,
 );
 
@@ -73,8 +104,13 @@ has 'size_on_disk' => (
     is => 'rw',
     isa => 'Int',
     default => sub { 
-        my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('SizeOnDisk')->payload if $self->level_nbt_data},
+            my $self = shift;
+            return $self->level_nbt_data->get_child_by_name('SizeOnDisk')->payload;
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            $self->level_nbt_data->get_child_by_name('SizeOnDisk')->payload($new_val);
+        },
     lazy => 1,
 );
 
@@ -82,8 +118,13 @@ has 'random_seed' => (
     is => 'rw',
     isa => 'Int',
     default => sub { 
-        my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('RandomSeed')->payload if $self->level_nbt_data},
+            my $self = shift;
+            return $self->level_nbt_data->get_child_by_name('RandomSeed')->payload;
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            $self->level_nbt_data->get_child_by_name('RandomSeed')->payload($new_val);
+        },
     lazy => 1,
 );
 
@@ -91,8 +132,13 @@ has 'snow_covered' => (
     is => 'rw',
     isa => 'Bool',
     default => sub { 
-        my $self = shift;
-        return $self->level_nbt_data->get_child_by_name('SnowCovered')->payload if $self->level_nbt_data},
+            my $self = shift;
+            return $self->level_nbt_data->get_child_by_name('SnowCovered')->payload;
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            $self->level_nbt_data->get_child_by_name('SnowCovered')->payload($new_val);
+        },
     lazy => 1,
 );
 
@@ -124,7 +170,7 @@ sub get_chunk {
     }
 
     if ($self->path && -e $self->path) {
-        my $chunk = Minecraft::Map::Util::load_chunk_from_file({
+        my $chunk = Minecraft::Util::load_chunk_from_file({
             world_path => $self->path,
             chunk_x => $chunk_x,
             chunk_z => $chunk_z,
@@ -141,6 +187,27 @@ sub set_chunk {
     $self->chunks->{$key} = $chunk;
 
     return $chunk
+}
+
+# parses the 'world' folder of a map
+sub parse_map_folder {  # TODO: rename to 'new_from_path'?
+    my $args = shift;
+    $args = shift if ! ref $args;
+
+    die "No args given" unless $args && ref $args;
+
+    my $path = $args->{path};
+    die "No valid path given" unless $path && -d $path;
+
+    chop $path if substr($path, -1, 1) eq '/';
+
+    require Minecraft::NBT;
+
+    my $level_data = Minecraft::NBT->parse_from_file({file => "$path/level.dat", is_named => 1})->payload->[0];
+    # TODO get players from nbt and put into Map objectx
+    my $map = Minecraft::Map->new({level_nbt_data => $level_data, path => $path});
+
+    return $map;
 }
 
 1;
