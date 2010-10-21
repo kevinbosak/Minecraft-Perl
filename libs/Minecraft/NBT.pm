@@ -98,11 +98,11 @@ sub parse_from_fh {
     # get the payload
     my $payload;
     if (type_to_string($tag_type) eq 'TAG_COMPOUND') {
-        my %tags = ();
+        my @tags = ();
         while (my $subtag = parse_from_fh({fh => $fh, is_named => 1})) {
-            $tags{$subtag->name} = $subtag;
+            push @tags, $subtag;
         }
-        $payload = \%tags;
+        $payload = \@tags;
 
     } elsif (type_to_string($tag_type) eq 'TAG_BYTE') {
         my $payload_data;
@@ -233,6 +233,7 @@ sub as_string {
         }
 
         $string .= "\n${leader}}";
+
     } elsif (ref $self->payload && ref $self->payload eq 'HASH') {
         my $length = scalar keys %{$self->payload};
         $string .= "$length entries";
@@ -329,9 +330,8 @@ sub as_nbt {
 
     } elsif (type_to_string($self->tag_type) eq 'TAG_COMPOUND') {
         # only give payload
-        for my $tag_name (keys %{$self->payload}) {
-            my $named_tag = $self->payload->{$tag_name};
-            $return .= $named_tag->as_nbt;
+        for my $tag (@{$self->payload}) {
+            $return .= $tag->as_nbt;
         }
         $return .= Minecraft::NBT::Byte->new({payload => string_to_type('TAG_END')})->as_nbt;
     }

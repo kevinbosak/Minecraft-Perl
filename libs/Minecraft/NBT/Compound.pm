@@ -4,7 +4,7 @@ use Mouse;
 extends 'Minecraft::NBT';
 
 has '+payload' => (
-    isa =>  => 'Maybe[HashRef]',
+    isa =>  => 'Maybe[ArrayRef]',
 );
 
 has '+tag_type' => (
@@ -15,16 +15,22 @@ sub remove_child_by_name {
     my ($self, $name) = @_;
     return unless $name;
 
-    my $children = $self->payload || {};
-    delete $children->{$name} if defined $children->{$name};
+    my $children = $self->payload || [];
+    my @children = ();
+    for my $child (@$children) {
+        push @children, $child unless $child->name && $child->name eq $name;
+    }
+    $self->payload(\@children);
 }
 
 sub get_child_by_name {
     my ($self, $name) = @_;
     return unless $name;
 
-    my $children = $self->payload || {};
-    return $children->{$name};
+    my $children = $self->payload || [];
+    for my $child (@$children) {
+        return $child if $child->name && $child->name eq $name;
+    }
 }
 
 1;

@@ -193,6 +193,15 @@ sub get_item_name {
     return $ITEMS->{$id};
 }
 
+sub get_item_id {
+    my $name = shift;
+    if ($name eq __PACKAGE__) {
+        $name = shift;
+    }
+    my %items = reverse %$ITEMS;
+    return $items{$name};
+}
+
 sub get_read_fh {
     my $filename = shift;
 
