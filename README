@@ -1,15 +1,28 @@
 This is a collection of perl libraries that can be used to read, write
 and manipulate data files from the game Minecraft (see http://minecraft.net).
 
-Currently, the dependencies are as follows (I probably forgot some):
+Currently, the dependencies are as follows:
+
+Perl 5.9 (due to how I'm using pack/unpack)
 PerlIO::gzip
 Mouse
-Perl 5.9 (due to how I'm using pack/unpack)
+Math::BigInt
+Readonly
+Data::Dumper
 
 Right now this project is quite incomplete and usage may change as it's
 developed more.  However, you can currently read/write NBT files and mess
 with map chunks a bit.  I've successfully modified both the level.dat
-and chunk files.
+and chunk files and generated maps from the block and height map data.
+
+
+TODO:
+
+* Flesh out Minecraft::Map with entities and other related objects.
+* Fix chunk class to update height map, skylight, etc. when blocks array
+    is updated
+* Add routines to check for valid data (block/item types, etc.)
+* I also hope to eventually add portions of the client/server protocol
 
 If you have any issues, questions, or contributions, please email Kevin Bosak at
 kevin@bosak.net.

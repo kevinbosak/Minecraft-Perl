@@ -5,37 +5,128 @@ extends 'Minecraft::Entity';
 
 has 'attack_time' => (
     is => 'rw',
-    isa => 'Minecraft::NBT::Short',
+    isa => 'Int',
+    default => sub {
+            my $self = shift;
+            if (my $entity_data = $self->entity_nbt_data) {
+                return $entity_data->get_child_by_name('AttackTime')->payload;
+            }
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $entity_data = $self->entity_nbt_data) {
+	            $entity_data->get_child_by_name('AttackTime')->payload($new_val);
+            }
+        },
+    lazy => 1,
 );
 
 has 'death_time' => (
     is => 'rw',
-    isa => 'Minecraft::NBT::Short',
+    isa => 'Int',
+    default => sub {
+            my $self = shift;
+            if (my $entity_data = $self->entity_nbt_data) {
+                return $entity_data->get_child_by_name('DeathTime')->payload;
+            }
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $entity_data = $self->entity_nbt_data) {
+	            $entity_data->get_child_by_name('DeathTime')->payload($new_val);
+            }
+        },
+    lazy => 1,
 );
 
 has 'health' => (
     is => 'rw',
-    isa => 'Minecraft::NBT::Short',
+    isa => 'Int',
+    default => sub {
+            my $self = shift;
+            if (my $entity_data = $self->entity_nbt_data) {
+                return $entity_data->get_child_by_name('Health')->payload;
+            }
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $entity_data = $self->entity_nbt_data) {
+	            $entity_data->get_child_by_name('Health')->payload($new_val);
+            }
+        },
+    lazy => 1,
 );
 
 has 'hurt_time' => (
     is => 'rw',
-    isa => 'Minecraft::NBT::Short',
+    isa => 'Int',
+    default => sub {
+            my $self = shift;
+            if (my $entity_data = $self->entity_nbt_data) {
+                return $entity_data->get_child_by_name('HurtTime')->payload;
+            }
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $entity_data = $self->entity_nbt_data) {
+	            $entity_data->get_child_by_name('HurtTime')->payload($new_val);
+            }
+        },
+    lazy => 1,
 );
 
-has 'saddle' => (
+has 'saddle' => ( # for pigs
     is => 'rw',
-    isa => 'Minecraft::NBT::Byte',
+    isa => 'Maybe[Bool]',
+    default => sub {
+            my $self = shift;
+            if (my $entity_data = $self->entity_nbt_data) {
+                return $entity_data->get_child_by_name('Saddle')->payload;
+            }
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $entity_data = $self->entity_nbt_data) {
+	            $entity_data->get_child_by_name('Saddle')->payload($new_val);
+            }
+        },
+    lazy => 1,
 );
 
-has 'sheared' => (
+has 'sheared' => ( # for sheep
     is => 'rw',
-    isa => 'Minecraft::NBT::Byte',
+    isa => 'Maybe[Bool]',
+    default => sub {
+            my $self = shift;
+            if (my $entity_data = $self->entity_nbt_data) {
+                return $entity_data->get_child_by_name('Sheared')->payload;
+            }
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $entity_data = $self->entity_nbt_data) {
+	            $entity_data->get_child_by_name('Sheared')->payload($new_val);
+            }
+        },
+    lazy => 1,
 );
 
-has 'size' => (
+has 'size' => ( # size of slime
     is => 'rw',
-    isa => 'Minecraft::NBT::Int',
+    isa => 'Maybe[Int]',
+    default => sub {
+            my $self = shift;
+            if (my $entity_data = $self->entity_nbt_data) {
+                return $entity_data->get_child_by_name('Size')->payload;
+            }
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $entity_data = $self->entity_nbt_data) {
+	            $entity_data->get_child_by_name('Size')->payload($new_val);
+            }
+        },
+    lazy => 1,
 );
 
 1;
