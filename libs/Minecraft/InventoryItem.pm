@@ -108,4 +108,14 @@ around BUILDARGS => sub {
     return $class->$orig($args);
 };
 
+sub as_perl {
+    my $self = shift;
+
+    my $return = {};
+    $return->{id} = $self->id;
+    $return->{slot} = $self->slot;
+    $return->{count} = $self->count;
+    return $return;
+}
+
 1;

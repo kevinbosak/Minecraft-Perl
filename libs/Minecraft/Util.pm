@@ -2,7 +2,7 @@ package Minecraft::Util;
 
 use Readonly;
 
-Readonly my $ITEMS => {
+Readonly my $ALL_ITEMS => {
     0   => 'air',
     1   => 'stone',
     2   => 'grass',
@@ -21,23 +21,9 @@ Readonly my $ITEMS => {
     15  => 'iron ore',
     16  => 'coal ore',
     17  => 'log',
-    18  => 'leaves',
+    18  => 'leaves', # hide
     19  => 'sponge',
     20  => 'glass',
-    21  => 'red cloth',
-    22  => 'orange cloth',
-    23  => 'yellow cloth',
-    24  => 'lime cloth',
-    25  => 'green cloth',
-    26  => 'aqua green cloth',
-    27  => 'cyan cloth',
-    28  => 'blue cloth',
-    29  => 'purple cloth',
-    30  => 'indigo cloth',
-    31  => 'violet cloth',
-    32  => 'magenta cloth',
-    33  => 'pink cloth',
-    34  => 'black cloth',
     35  => 'gray cloth',
     36  => 'white cloth',
     37  => 'yellow flower',
@@ -46,7 +32,7 @@ Readonly my $ITEMS => {
     40  => 'red mushroom',
     41  => 'violet gold block',
     42  => 'iron block',
-    43  => 'double step',
+    43  => 'double step', # hide
     44  => 'step',
     45  => 'brick',
     46  => 'TNT',
@@ -54,39 +40,39 @@ Readonly my $ITEMS => {
     48  => 'mossy cobblestone',
     49  => 'obsidian',
     50  => 'torch',
-    51  => 'fire',
-    52  => 'mob spawner',
+    51  => 'fire', # hide
+    52  => 'mob spawner', # hide
     53  => 'wooden stairs',
     54  => 'chest',
-    55  => 'redstone wire',
+    55  => 'redstone wire', # hide
     56  => 'diamond ore',
     57  => 'diamond block',
     58  => 'workbench',
-    59  => 'crops',
-    60  => 'soil',
+    59  => 'crops', # hide
+    60  => 'soil', # hide
     61  => 'furnace',
-    62  => 'burning furnace',
+    62  => 'burning furnace', # hide
     63  => 'sign post',
     64  => 'wooden door',
     65  => 'ladder',
     66  => 'minecart tracks',
     67  => 'cobblestone stairs',
-    68  => 'wall sign',
+    68  => 'wall sign', # hide
     69  => 'lever',
     70  => 'stone pressure plate',
     71  => 'iron door',
     72  => 'wooden pressure plate',
     73  => 'redstone ore',
-    74  => 'glowing redstone ore',
+    74  => 'glowing redstone ore', # hide
     75  => 'redstone torch (off)',
-    76  => 'redstone torch (on)',
+    76  => 'redstone torch (on)', # hide
     77  => 'stone button',
-    78  => 'snow',
-    79  => 'ice',
-    80  => 'soil',
+    78  => 'snow', # hide
+    79  => 'ice', # hide
+    80  => 'soil', # hide
     81  => 'cactus',
-    82  => 'clay',
-    83  => 'reed',
+    82  => 'clay', # hide
+    83  => 'reed', # hide
     84  => 'jukebox',
     85  => 'fence',
 
@@ -185,6 +171,194 @@ Readonly my $ITEMS => {
     2257 => 'green record',
 };
 
+Readonly my $INVENTORY_ITEMS => [qw(
+    1   
+    2   
+    3   
+    4   
+    5   
+    6   
+    7   
+    9   
+    11  
+    12  
+    13  
+    14  
+    15  
+    16  
+    17  
+    18  
+    19  
+    20  
+    21  
+    22  
+    23  
+    24  
+    25  
+    26  
+    27  
+    28  
+    29  
+    30  
+    31  
+    32  
+    33  
+    34  
+    35  
+    36  
+    37  
+    38  
+    39  
+    40  
+    41  
+    42  
+    44  
+    45  
+    46  
+    47  
+    48  
+    49  
+    50  
+    53  
+    54  
+    56  
+    57  
+    58  
+    61  
+    63  
+    64  
+    65  
+    66  
+    67  
+    69  
+    70  
+    71  
+    72  
+    73  
+    75  
+    77  
+    81  
+    84  
+    85  
+
+    256 
+    257 
+    258 
+    259 
+    260 
+    261 
+    262 
+    263 
+    264 
+    265 
+    266 
+    267 
+    268 
+    269 
+    270 
+    271 
+    272 
+    273 
+    274 
+    275 
+    276 
+    277 
+    278 
+    279 
+    280 
+    281 
+    282 
+    283 
+    284 
+    285 
+    286 
+    287 
+    288 
+    289 
+    290 
+    291 
+    292 
+    293 
+    294 
+    295 
+    296 
+    297 
+    298 
+    299 
+    300 
+    301 
+    302 
+    303 
+    304 
+    305 
+    306 
+    307 
+    308 
+    309 
+    310 
+    311 
+    312 
+    313 
+    314 
+    315 
+    316 
+    317 
+    318 
+    319 
+    320 
+    321 
+    322 
+    323 
+    324 
+    325 
+    326 
+    327 
+    328 
+    329 
+    330 
+    331 
+    332 
+    333 
+    334 
+    335 
+    336 
+    337 
+    338 
+    339 
+    340 
+    341 
+    342 
+    343 
+    344 
+    345 
+    346 
+    2256
+    2257
+)];
+
+sub item_has_damage {
+    my $item_id = shift;
+    $item_id = shift if $item_id eq __PACKAGE__;
+
+    return unless $item_id && $item_id =~ m/^\d+$/;
+    if (($item_id >= 256 && $item_id <=259) || ($item_id >= 267 && $item_id <= 279)
+                || ($item_id >= 283 && $item_id <= 286) || ($item_id >= 298 && $item_id <= 317)) {
+        return 1;
+    }
+}
+
+sub get_items {
+    return wantarray ? %$ALL_ITEMS : $ALL_ITEMS;
+}
+
+sub get_inventory_items {
+    my %items = ();
+    for my $id (@$INVENTORY_ITEMS) {
+        $items{$id} = $ALL_ITEMS->{$id};
+    }
+    return wantarray ? %items : \%items;
+}
+
 sub get_item_name {
     my $id = shift;
     if ($id eq __PACKAGE__) {
@@ -198,7 +372,7 @@ sub get_item_id {
     if ($name eq __PACKAGE__) {
         $name = shift;
     }
-    my %items = reverse %$ITEMS;
+    my %items = reverse %$ALL_ITEMS;
     return $items{$name};
 }
 
