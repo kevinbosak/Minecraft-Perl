@@ -75,6 +75,12 @@ Readonly my $ALL_ITEMS => {
     83  => 'reed', # hide
     84  => 'jukebox',
     85  => 'fence',
+    86 => 'pumpkin',
+    87 => 'bloodstone',
+    88 => 'slow sand',
+    89 => 'lightstone',
+    90 => 'warp',
+    91 => 'jack-o-lantern',
 
     256 => 'iron spade',
     257 => 'iron pickaxe',
@@ -167,6 +173,10 @@ Readonly my $ALL_ITEMS => {
     344 => 'egg',
     345 => 'compass',
     346 => 'fishing rod',
+    347 => 'watch',
+    348 => 'lightstone dust',
+    349 => 'fish',
+    350 => 'cooked fish',
     2256 => 'gold record',
     2257 => 'green record',
 };
@@ -190,20 +200,6 @@ Readonly my $INVENTORY_ITEMS => [qw(
     18  
     19  
     20  
-    21  
-    22  
-    23  
-    24  
-    25  
-    26  
-    27  
-    28  
-    29  
-    30  
-    31  
-    32  
-    33  
-    34  
     35  
     36  
     37  
@@ -240,6 +236,11 @@ Readonly my $INVENTORY_ITEMS => [qw(
     81  
     84  
     85  
+    86
+    87
+    88
+    89
+    91
 
     256 
     257 
@@ -332,6 +333,10 @@ Readonly my $INVENTORY_ITEMS => [qw(
     344 
     345 
     346 
+    347
+    348
+    349
+    350
     2256
     2257
 )];

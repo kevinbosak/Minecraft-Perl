@@ -115,6 +115,7 @@ sub as_perl {
     $return->{id} = $self->id;
     $return->{slot} = $self->slot;
     $return->{count} = $self->count;
+    $return->{damage} = $self->damage;
     return $return;
 }
 
