@@ -79,7 +79,7 @@ Readonly my $ALL_ITEMS => {
     87 => 'bloodstone',
     88 => 'slow sand',
     89 => 'lightstone',
-    90 => 'warp',
+    90 => 'portal',
     91 => 'jack-o-lantern',
 
     256 => 'iron spade',
@@ -221,14 +221,11 @@ Readonly my $INVENTORY_ITEMS => [qw(
     57  
     58  
     61  
-    63  
-    64  
     65  
     66  
     67  
     69  
     70  
-    71  
     72  
     73  
     75  
@@ -240,6 +237,7 @@ Readonly my $INVENTORY_ITEMS => [qw(
     87
     88
     89
+    90
     91
 
     256 
