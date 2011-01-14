@@ -28,7 +28,7 @@ Readonly my $ALL_ITEMS => {
     22 => 'lapis lazuli block',
     23 => 'dispenser',
     25 => 'note block',
-    35  => 'white cloth',
+    35  => 'cloth',
     37  => 'yellow flower',
     38  => 'red flower',
     39  => 'brown mushroom',
@@ -355,6 +355,7 @@ Readonly my $INVENTORY_ITEMS => [qw(
     2257
 )];
 
+# NOTE: This may change to include description of each item value
 Readonly my $SPECIAL_ITEMS => {
     17 => [0..2],
     35 => [0..15],
@@ -394,6 +395,10 @@ sub item_has_damage {
 
 sub get_items {
     return wantarray ? %$ALL_ITEMS : $ALL_ITEMS;
+}
+
+sub get_special_items {
+    return wantarray ? %$SPECIAL_ITEMS : $SPECIAL_ITEMS;
 }
 
 sub get_inventory_items {
