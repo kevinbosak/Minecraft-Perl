@@ -27,6 +27,7 @@ Readonly my $ALL_ITEMS => {
     21 => 'lapis lazuli ore',
     22 => 'lapis lazuli block',
     23 => 'dispenser',
+    25 => 'note block',
     35  => 'white cloth',
     37  => 'yellow flower',
     38  => 'red flower',
@@ -210,6 +211,7 @@ Readonly my $INVENTORY_ITEMS => [qw(
     21
     22
     23
+    25
     35  
     37  
     38  
@@ -352,6 +354,11 @@ Readonly my $INVENTORY_ITEMS => [qw(
     2256
     2257
 )];
+
+Readonly my $SPECIAL_ITEMS => {
+    17 => [0..2],
+    35 => [0..15],
+};
 
 Readonly my $WOOL_COLORS => [
     'white',
