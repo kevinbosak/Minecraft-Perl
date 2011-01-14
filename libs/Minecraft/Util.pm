@@ -207,6 +207,9 @@ Readonly my $INVENTORY_ITEMS => [qw(
     18  
     19  
     20  
+    21
+    22
+    23
     35  
     37  
     38  
@@ -368,6 +371,8 @@ Readonly my $WOOL_COLORS => [
     'red',
     'black',
 ];
+
+# FIXME: need some way to denote damage is used for wool color
 
 sub item_has_damage {
     my $item_id = shift;
