@@ -350,6 +350,25 @@ Readonly my $INVENTORY_ITEMS => [qw(
     2257
 )];
 
+Readonly my $WOOL_COLORS => [
+    'white',
+    'orange',
+    'magenta',
+    'light blue',
+    'yellow',
+    'light green',
+    'pink',
+    'dark gray',
+    'gray',
+    'cyan',
+    'purple',
+    'blue',
+    'brown',
+    'dark green',
+    'red',
+    'black',
+];
+
 sub item_has_damage {
     my $item_id = shift;
     $item_id = shift if $item_id eq __PACKAGE__;
@@ -388,6 +407,32 @@ sub get_item_id {
     }
     my %items = reverse %$ALL_ITEMS;
     return $items{$name};
+}
+
+sub get_wool_colors {
+    return wantarray ? @$WOOL_COLORS : $WOOL_COLORS;
+}
+
+sub get_wool_color_name {
+    my $id = shift;
+    if ($id eq __PACKAGE__) {
+        $id = shift;
+    }
+    return $WOOL_COLORS->[$id];
+}
+
+sub get_wool_color_id {
+    my $color = shift;
+    if ($name eq __PACKAGE__) {
+        $name = shift;
+    }
+    my $i = 0;
+    for my $color_name (@$WOOL_COLORS) {
+        if ($color_name eq lc($color)) {
+            return $i;
+        }
+        $i++;
+    }
 }
 
 sub get_read_fh {
