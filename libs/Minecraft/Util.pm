@@ -181,7 +181,7 @@ Readonly my $ALL_ITEMS => {
     348 => 'lightstone dust',
     349 => 'fish',
     350 => 'cooked fish',
-    351 => 'ink sack',
+    351 => 'dye',
     352 => 'bone',
     353 => 'sugar',
     354 => 'cake',
@@ -359,6 +359,7 @@ Readonly my $INVENTORY_ITEMS => [qw(
 Readonly my $SPECIAL_ITEMS => {
     17 => [0..2],
     35 => [0..15],
+    351 => [0..15],
 };
 
 Readonly my $WOOL_COLORS => [
@@ -378,6 +379,31 @@ Readonly my $WOOL_COLORS => [
     'dark green',
     'red',
     'black',
+];
+
+Readonly my $LOGS => [
+    'normal',
+    'redwood',
+    'birch',
+];
+
+Readonly my $DYES => [
+    'ink sack',
+    'rose red',
+    'cactus green',
+    'coco beans',
+    'lapis lazuli',
+    'purple dye',
+    'cyan dye',
+    'light gray dye',
+    'gray dye',
+    'pink dye',
+    'lime dye',
+    'dandelion yellow',
+    'light blue dye',
+    'magenta dye',
+    'orange dye',
+    'bone meal',
 ];
 
 # FIXME: need some way to denote damage is used for wool color
@@ -426,30 +452,28 @@ sub get_item_id {
     return $items{$name};
 }
 
-sub get_wool_colors {
-    return wantarray ? @$WOOL_COLORS : $WOOL_COLORS;
-}
-
-sub get_wool_color_name {
+sub get_special_item_name {
     my $id = shift;
     if ($id eq __PACKAGE__) {
         $id = shift;
     }
-    return $WOOL_COLORS->[$id];
+    my $special_val = shift;
+
+    if ($id == 35) {
+        return $WOOL_COLORS->[$special_val];
+    } elsif ($id == 17) {
+        return $LOGS->[$special_val];
+    } elsif ($id == 351) {
+        return $DYES->[$special_val];
+    }
 }
 
-sub get_wool_color_id {
-    my $color = shift;
-    if ($name eq __PACKAGE__) {
-        $name = shift;
-    }
-    my $i = 0;
-    for my $color_name (@$WOOL_COLORS) {
-        if ($color_name eq lc($color)) {
-            return $i;
-        }
-        $i++;
-    }
+sub get_wool_colors {
+    return wantarray ? @$WOOL_COLORS : $WOOL_COLORS;
+}
+
+sub get_dyes {
+    return wantarray ? @$DYES : $DYES;
 }
 
 sub get_read_fh {
