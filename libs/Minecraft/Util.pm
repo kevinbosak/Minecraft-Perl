@@ -27,6 +27,7 @@ Readonly my $ALL_ITEMS => {
     21 => 'lapis lazuli ore',
     22 => 'lapis lazuli block',
     23 => 'dispenser',
+    24 => 'sandstone',
     25 => 'note block',
     35  => 'cloth',
     37  => 'yellow flower',
@@ -211,6 +212,7 @@ Readonly my $INVENTORY_ITEMS => [qw(
     21
     22
     23
+    24
     25
     35  
     37  
