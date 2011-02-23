@@ -225,7 +225,6 @@ Readonly my $INVENTORY_ITEMS => [qw(
     40  
     41  
     42  
-    43
     44  
     45  
     46  
