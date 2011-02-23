@@ -29,6 +29,7 @@ Readonly my $ALL_ITEMS => {
     23 => 'dispenser',
     24 => 'sandstone',
     25 => 'note block',
+    26 => 'bed',
     35  => 'cloth',
     37  => 'yellow flower',
     38  => 'red flower',
@@ -73,7 +74,7 @@ Readonly my $ALL_ITEMS => {
     77  => 'stone button',
     78  => 'snow', # hide
     79  => 'ice', # hide
-    80  => 'soil', # hide
+    80  => 'snow', # hide
     81  => 'cactus',
     82  => 'clay', # hide
     83  => 'reed', # hide
@@ -86,6 +87,8 @@ Readonly my $ALL_ITEMS => {
     90 => 'portal',
     91 => 'jack-o-lantern',
     92 => 'cake block',
+    93 => 'redstone repeater',
+    94 => 'redstone repeater',
 
     256 => 'iron spade',
     257 => 'iron pickaxe',
@@ -214,6 +217,7 @@ Readonly my $INVENTORY_ITEMS => [qw(
     23
     24
     25
+    26
     35  
     37  
     38  
@@ -243,6 +247,7 @@ Readonly my $INVENTORY_ITEMS => [qw(
     73  
     75  
     77  
+    80
     81  
     84  
     85  
@@ -253,6 +258,7 @@ Readonly my $INVENTORY_ITEMS => [qw(
     90
     91
     92
+    93
 
     256 
     257 
@@ -360,9 +366,18 @@ Readonly my $INVENTORY_ITEMS => [qw(
 # NOTE: This may change to include description of each item value
 Readonly my $SPECIAL_ITEMS => {
     17 => [0..2],
+    43 => [0..3],
+    44 => [0..3],
     35 => [0..15],
     351 => [0..15],
 };
+
+Readonly my $SLAB_TYPES => [
+    'Stone',
+    'Sandstone',
+    'Wood',
+    'Cobblestone',
+];
 
 Readonly my $WOOL_COLORS => [
     'white',
