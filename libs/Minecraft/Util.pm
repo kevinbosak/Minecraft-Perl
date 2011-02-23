@@ -37,8 +37,8 @@ Readonly my $ALL_ITEMS => {
     40  => 'red mushroom',
     41  => 'violet gold block',
     42  => 'iron block',
-    43  => 'double step', # hide
-    44  => 'step',
+    43  => 'double slab',
+    44  => 'slab',
     45  => 'brick',
     46  => 'TNT',
     47  => 'bookcase',
@@ -225,6 +225,7 @@ Readonly my $INVENTORY_ITEMS => [qw(
     40  
     41  
     42  
+    43
     44  
     45  
     46  
@@ -373,10 +374,10 @@ Readonly my $SPECIAL_ITEMS => {
 };
 
 Readonly my $SLAB_TYPES => [
-    'Stone',
-    'Sandstone',
-    'Wood',
-    'Cobblestone',
+    'stone',
+    'sandstone',
+    'wood',
+    'cobblestone',
 ];
 
 Readonly my $WOOL_COLORS => [
@@ -478,6 +479,10 @@ sub get_special_item_name {
 
     if ($id == 35) {
         return $WOOL_COLORS->[$special_val];
+    } elsif ($id == 43) {
+        return $SLAB_TYPES->[$special_val];
+    } elsif ($id == 44) {
+        return $SLAB_TYPES->[$special_val];
     } elsif ($id == 17) {
         return $LOGS->[$special_val];
     } elsif ($id == 351) {
