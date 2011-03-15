@@ -46,7 +46,7 @@ Readonly my $ALL_ITEMS => {
     49  => 'obsidian',
     50  => 'torch',
     51  => 'fire', # hide
-    52  => 'mob spawner', # hide
+    52  => 'mob spawner',
     53  => 'wooden stairs',
     54  => 'chest',
     55  => 'redstone wire', # hide
@@ -232,6 +232,7 @@ Readonly my $INVENTORY_ITEMS => [qw(
     48  
     49  
     50  
+    52
     53  
     54  
     56  
@@ -249,6 +250,7 @@ Readonly my $INVENTORY_ITEMS => [qw(
     77  
     80
     81  
+    82
     84  
     85  
     86
