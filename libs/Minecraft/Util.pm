@@ -21,7 +21,7 @@ Readonly my $ALL_ITEMS => {
     15  => 'iron ore',
     16  => 'coal ore',
     17  => 'log',
-    18  => 'leaves', # hide
+    18  => 'leaves',
     19  => 'sponge',
     20  => 'glass',
     21 => 'lapis lazuli ore',
@@ -30,6 +30,8 @@ Readonly my $ALL_ITEMS => {
     24 => 'sandstone',
     25 => 'note block',
     26 => 'bed',
+    27 => 'powered rail',
+    28 => 'detector rail',
     35  => 'cloth',
     37  => 'yellow flower',
     38  => 'red flower',
@@ -73,8 +75,8 @@ Readonly my $ALL_ITEMS => {
     76  => 'redstone torch (on)', # hide
     77  => 'stone button',
     78  => 'snow', # hide
-    79  => 'ice', # hide
-    80  => 'snow', # hide
+    79  => 'ice',
+    80  => 'snow',
     81  => 'cactus',
     82  => 'clay', # hide
     83  => 'reed', # hide
@@ -218,6 +220,8 @@ Readonly my $INVENTORY_ITEMS => [qw(
     24
     25
     26
+    27
+    28
     35  
     37  
     38  
@@ -248,6 +252,7 @@ Readonly my $INVENTORY_ITEMS => [qw(
     73  
     75  
     77  
+    79
     80
     81  
     82
@@ -367,7 +372,9 @@ Readonly my $INVENTORY_ITEMS => [qw(
 
 # NOTE: This may change to include description of each item value
 Readonly my $SPECIAL_ITEMS => {
+    6  => [0..2],
     17 => [0..2],
+    18 => [0..2],
     43 => [0..3],
     44 => [0..3],
     35 => [0..15],
@@ -400,7 +407,7 @@ Readonly my $WOOL_COLORS => [
     'black',
 ];
 
-Readonly my $LOGS => [
+Readonly my $TREE_TYPES => [
     'normal',
     'redwood',
     'birch',
@@ -484,8 +491,8 @@ sub get_special_item_name {
         return $SLAB_TYPES->[$special_val];
     } elsif ($id == 44) {
         return $SLAB_TYPES->[$special_val];
-    } elsif ($id == 17) {
-        return $LOGS->[$special_val];
+    } elsif ($id == 17 || $id == 6 || $id == 18) {
+        return $TREE_TYPES->[$special_val];
     } elsif ($id == 351) {
         return $DYES->[$special_val];
     }
