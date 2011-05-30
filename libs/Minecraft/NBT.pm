@@ -66,13 +66,13 @@ sub type_to_string {
 }
 
 # pulls the nbt raw data from an open filehandle and converts it to objects
-sub parse_from_fh {
+sub parse_data {
     my $args = shift;
     if (!ref $args) {
         $args = shift;
     }
-    my $fh = $args->{fh} if $args;
-    die "No file handle given" unless $fh;
+    my $data = $args->{data} if $args;
+    die "No data given" unless $data && length($data);
 
     my $tag_type = $args->{tag_type};
 
@@ -81,7 +81,7 @@ sub parse_from_fh {
 
     my $has_name = $args->{is_named};
     if (!defined $tag_type) {
-        my $type_data = parse_from_fh({fh => $fh, tag_type => string_to_type('TAG_BYTE')});
+        my $type_data = parse_data({data => $data, tag_type => string_to_type('TAG_BYTE')});
         $tag_type = $type_data->payload;
     }
     die "NO TAG TYPE" unless defined $tag_type;
@@ -90,89 +90,75 @@ sub parse_from_fh {
 
     # get the tag's name
     if ($has_name) {
-        my $name_data = parse_from_fh({fh => $fh, tag_type => string_to_type('TAG_STRING')});
+        my $name_data = parse_data({data => $data, tag_type => string_to_type('TAG_STRING')});
         my $tag_name = $name_data->payload;
         $tag_data->{name} = $tag_name;
     }
-
     # get the payload
     my $payload;
     if (type_to_string($tag_type) eq 'TAG_COMPOUND') {
         my @tags = ();
-        while (my $subtag = parse_from_fh({fh => $fh, is_named => 1})) {
+        while (my $subtag = parse_data({data => $data, is_named => 1})) {
             push @tags, $subtag;
         }
         $payload = \@tags;
 
     } elsif (type_to_string($tag_type) eq 'TAG_BYTE') {
-        my $payload_data;
-        read($fh, $payload_data, 1);
+        my $payload_data = substr($$data, 0, 1, '');
         ($payload) = unpack('c', $payload_data);
 
     } elsif (type_to_string($tag_type) eq 'TAG_SHORT') {
-        my $payload_data;
-        read($fh, $payload_data, 2);
+        my $payload_data = substr($$data, 0, 2, '');
         ($payload) = unpack('s>', $payload_data);
 
     } elsif (type_to_string($tag_type) eq'TAG_INT') {
-        my $payload_data;
-        read($fh, $payload_data, 4);
+        my $payload_data = substr($$data, 0, 4, '');
         ($payload) = unpack('l>', $payload_data);
 
     } elsif (type_to_string($tag_type) eq 'TAG_LONG') {
-        my $payload_data;
-#        read($fh, $payload_data, 8);
-#        ($payload) = unpack('q>', $payload_data);
         my $byte_string = '';
         my @bytes = ();
         for (1..8) {
-            my $byte;
-            read($fh, $byte, 1);
-	    my ($byte_string) = unpack('B*', $byte);
+            my $byte = substr($$data, 0, 1, '');
+            my ($byte_string) = unpack('B*', $byte);
             push @bytes, $byte_string;
         }
-#        read($fh, $payload_data, 8);
         $payload = Math::BigInt->new('0b' . join('', @bytes));
 
     } elsif (type_to_string($tag_type) eq 'TAG_FLOAT') {
-        my $payload_data;
-        read($fh, $payload_data, 4);
+        my $payload_data = substr($$data, 0, 4, '');
         ($payload) = unpack('f>', $payload_data);
 
     } elsif (type_to_string($tag_type) eq 'TAG_DOUBLE') {
-        my $payload_data;
-        read($fh, $payload_data, 8);
+        my $payload_data = substr($$data, 0, 8, '');
         ($payload) = unpack('d>', $payload_data);
 
     } elsif (type_to_string($tag_type) eq 'TAG_BYTE_ARRAY') {
-        my $length_data = parse_from_fh({fh => $fh, tag_type => string_to_type('TAG_INT')});
+        my $length_data = parse_data({data => $data, tag_type => string_to_type('TAG_INT')});
         my $length = $length_data->payload;
 
-        my $payload_data;
-        read($fh, $payload_data, $length);
+        my $payload_data = substr($$data, 0, $length, '');
         $payload = $payload_data;
-#        ($payload) = unpack("B*", $payload_data);
 
     } elsif (type_to_string($tag_type) eq 'TAG_STRING') {
-        my $length_data = parse_from_fh({fh => $fh, tag_type => string_to_type('TAG_SHORT')});
+        my $length_data = parse_data({data => $data, tag_type => string_to_type('TAG_SHORT')});
         my $length = $length_data->payload;
 
-        my $payload_data;
-        read($fh, $payload_data, $length);
+        my $payload_data = substr($$data, 0, $length, '');
         $payload = $payload_data;
         utf8::upgrade($payload);
 
     } elsif (type_to_string($tag_type) eq 'TAG_LIST') {
-        my $id_data = parse_from_fh({fh => $fh, tag_type => string_to_type('TAG_BYTE')});
+        my $id_data = parse_data({data => $data, tag_type => string_to_type('TAG_BYTE')});
         my $id = $id_data->payload;
         $tag_data->{subtag_type} = $id;
 
-        my $length_data = parse_from_fh({fh => $fh, tag_type => string_to_type('TAG_INT')});
+        my $length_data = parse_data({data => $data, tag_type => string_to_type('TAG_INT')});
         my $length = $length_data->payload;
 
         my @tags = ();
         for (1..$length) {
-            my $tag_data = parse_from_fh({fh => $fh, tag_type => $id});
+            my $tag_data = parse_data({data => $data, tag_type => $id});
             push @tags, $tag_data;
         }
         $payload = \@tags;
@@ -191,21 +177,21 @@ sub parse_from_fh {
     return $tag_obj;
 }
 
-sub parse_from_file {
-    my $args = shift;
-    if (!ref $args) {
-        $args = shift;
-    }
-    my $filename = delete $args->{file} if $args;
-    die "No file given" unless $filename;
-    die "File not found" unless -e $filename;
+#sub parse_from_file {
+#    my $args = shift;
+#    if (!ref $args) {
+#        $args = shift;
+#    }
+#    my $filename = delete $args->{file} if $args;
+#    die "No file given" unless $filename;
+#    die "File not found" unless -e $filename;
 
-    $args->{fh} = Minecraft::Util::get_read_fh($filename);
-    $args->{is_named} = 1;
-    my $return = parse_from_fh($args);
-    close $args->{fh};
-    return $return;
-}
+#    $args->{fh} = Minecraft::Util::get_read_fh($filename);
+#    $args->{is_named} = 1;
+#    my $return = parse_from_fh($args);
+#    close $args->{fh};
+#    return $return;
+#}
 
 sub as_string {
     my $self = shift;
