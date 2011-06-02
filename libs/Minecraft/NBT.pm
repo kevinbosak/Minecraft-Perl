@@ -6,6 +6,7 @@ use Mouse;
 use Readonly;
 use Data::Dumper;
 use Math::BigInt;
+use Compress::Zlib;
 
 has 'name' => (
     is => 'rw',
@@ -65,14 +66,35 @@ sub type_to_string {
     return $TYPES{$type};
 }
 
-# pulls the nbt raw data from an open filehandle and converts it to objects
+sub unzip_data {
+    my $data = shift;
+    if ($data eq __PACKAGE__) {
+        $data = shift;
+    }
+
+    # gzopen needs a filehandle, so make one
+    my $fh;
+    open ($fh, '+<', \$data);
+
+    my $gz = gzopen($fh, 'rb');
+    my $buffer;
+    my $return = '';
+    while ($gz->gzread($buffer)) {
+        $return .= $buffer;
+    }
+    $return .= $buffer;
+    close $fh;
+    return $return;
+}
+
+# pulls the nbt raw data from raw data and converts it to objects
 sub parse_data {
     my $args = shift;
     if (!ref $args) {
         $args = shift;
     }
     my $data = $args->{data} if $args;
-    die "No data given" unless $data && length($data);
+    die "No data given" unless $$data && length($$data);
 
     my $tag_type = $args->{tag_type};
 
@@ -94,6 +116,7 @@ sub parse_data {
         my $tag_name = $name_data->payload;
         $tag_data->{name} = $tag_name;
     }
+
     # get the payload
     my $payload;
     if (type_to_string($tag_type) eq 'TAG_COMPOUND') {
@@ -177,21 +200,35 @@ sub parse_data {
     return $tag_obj;
 }
 
-#sub parse_from_file {
-#    my $args = shift;
-#    if (!ref $args) {
-#        $args = shift;
-#    }
-#    my $filename = delete $args->{file} if $args;
-#    die "No file given" unless $filename;
-#    die "File not found" unless -e $filename;
+sub parse_from_file {
+    my $args = shift;
+    if (!ref $args) {
+        $args = shift;
+    }
+    my $filename = delete $args->{file} if $args;
+    die "No file given" unless $filename;
+    die "File not found" unless -e $filename;
 
-#    $args->{fh} = Minecraft::Util::get_read_fh($filename);
-#    $args->{is_named} = 1;
-#    my $return = parse_from_fh($args);
-#    close $args->{fh};
-#    return $return;
-#}
+    my $FH;
+    open($FH, "<", $filename) or die "Could not open $filename";
+    binmode $FH;
+    my $data;
+    {
+        local $/;
+        $data = <$FH>;
+    }
+    close $FH;
+
+    if ($args->{is_compressed}) {
+        $data = unzip_data($data);
+        delete $args->{is_compressed};
+    }
+
+    $args->{data} = \$data;
+    
+    my $return = parse_data($args);
+    return $return;
+}
 
 sub as_string {
     my $self = shift;
