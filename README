@@ -4,7 +4,7 @@ and manipulate data files from the game Minecraft (see http://minecraft.net).
 Currently, the dependencies are as follows:
 
 Perl 5.9 (due to how I'm using pack/unpack)
-PerlIO::gzip
+Compress::Zlib
 Mouse
 Math::BigInt
 Readonly
