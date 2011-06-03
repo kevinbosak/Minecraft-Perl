@@ -196,6 +196,7 @@ Readonly my $ALL_ITEMS => {
     352 => 'bone',
     353 => 'sugar',
     354 => 'cake',
+    358 => 'map',
     2256 => 'gold music disc',
     2257 => 'green music disc',
 };
@@ -372,6 +373,7 @@ Readonly my $INVENTORY_ITEMS => [qw(
     348
     349
     350
+    358
     351
     352
     353
@@ -457,7 +459,8 @@ sub item_has_damage {
 
     return unless $item_id && $item_id =~ m/^\d+$/;
     if (($item_id >= 256 && $item_id <=259) || ($item_id >= 267 && $item_id <= 279)
-                || ($item_id >= 283 && $item_id <= 286) || ($item_id >= 298 && $item_id <= 317)) {
+                || ($item_id >= 283 && $item_id <= 286) || ($item_id >= 298 && $item_id <= 317
+                || $item_id == 358)) {
         return 1;
     }
 }
@@ -554,6 +557,19 @@ sub get_chunk_region {
     my $z = int(floor($z_pos / 32));
 
     return wantarray ? ($x,$z) : [$x,$z];
+}
+
+sub get_write_fh {
+    my $filename = shift;
+
+    $filename = shift if $filename eq __PACKAGE__;
+    die "No file given" unless $filename;
+
+    require PerlIO::gzip;
+
+    my $FH;
+    open $FH, ">:gzip", $filename or die $!;
+    return $FH;
 }
 
 # FIXME: NOT USED. Take out if this isn't needed. Regions now load chunks on they fly
