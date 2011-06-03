@@ -33,6 +33,9 @@ Readonly my $ALL_ITEMS => {
     26 => 'bed',
     27 => 'powered rail',
     28 => 'detector rail',
+    30 => 'cobweb',
+    31 => 'plant',
+    32 => 'dead shrub',
     35  => 'cloth',
     37  => 'yellow flower',
     38  => 'red flower',
@@ -75,7 +78,7 @@ Readonly my $ALL_ITEMS => {
     75  => 'redstone torch (off)',
     76  => 'redstone torch (on)', # hide
     77  => 'stone button',
-    78  => 'snow', # hide
+    78  => 'snow',
     79  => 'ice',
     80  => 'snow',
     81  => 'cactus',
@@ -92,6 +95,7 @@ Readonly my $ALL_ITEMS => {
     92 => 'cake block',
     93 => 'redstone repeater',
     94 => 'redstone repeater',
+    96 => 'trapdoor',
 
     256 => 'iron spade',
     257 => 'iron pickaxe',
@@ -223,6 +227,9 @@ Readonly my $INVENTORY_ITEMS => [qw(
     26
     27
     28
+    30
+    31
+    32
     35  
     37  
     38  
@@ -253,6 +260,7 @@ Readonly my $INVENTORY_ITEMS => [qw(
     73  
     75  
     77  
+    78
     79
     80
     81  
@@ -267,6 +275,7 @@ Readonly my $INVENTORY_ITEMS => [qw(
     91
     92
     93
+    96
 
     256 
     257 
@@ -378,9 +387,16 @@ Readonly my $SPECIAL_ITEMS => {
     18 => [0..2],
     43 => [0..3],
     44 => [0..3],
+    31 => [0..2],
     35 => [0..15],
     351 => [0..15],
 };
+
+Readonly my $GRASS_TYPES => [
+    'dead shrub',
+    'tall grass',
+    'fern',
+];
 
 Readonly my $SLAB_TYPES => [
     'stone',
@@ -488,6 +504,8 @@ sub get_special_item_name {
 
     if ($id == 35) {
         return $WOOL_COLORS->[$special_val];
+    } elsif ($id == 31) {
+        return $GRASS_TYPES->[$special_val];
     } elsif ($id == 43) {
         return $SLAB_TYPES->[$special_val];
     } elsif ($id == 44) {
