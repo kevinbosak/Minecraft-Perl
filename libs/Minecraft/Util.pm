@@ -33,9 +33,11 @@ Readonly my $ALL_ITEMS => {
     26 => 'bed',
     27 => 'powered rail',
     28 => 'detector rail',
+    29 => 'sticky piston',
     30 => 'cobweb',
     31 => 'plant',
     32 => 'dead shrub',
+    33 => 'piston',
     35  => 'cloth',
     37  => 'yellow flower',
     38  => 'red flower',
@@ -228,9 +230,11 @@ Readonly my $INVENTORY_ITEMS => [qw(
     26
     27
     28
+    29
     30
     31
     32
+    33
     35  
     37  
     38  
