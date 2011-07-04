@@ -190,7 +190,7 @@ sub parse_map_folder {  # TODO: rename to 'new_from_path'?
 
     require Minecraft::NBT;
 
-    my $level_data = Minecraft::NBT->parse_from_file({file => "$path/level.dat", is_named => 1})->payload->[0];
+    my $level_data = Minecraft::NBT->parse_from_file({file => "$path/level.dat", is_named => 1, is_compressed => 1})->payload->[0];
     # TODO get players from nbt and put into Map objectx
     my $map = Minecraft::Map->new({level_nbt_data => $level_data, path => $path});
 
