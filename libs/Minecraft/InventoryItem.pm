@@ -94,14 +94,14 @@ around BUILDARGS => sub {
         my $nbt_data = Minecraft::NBT::Compound->new(payload => [$id]);
 
         my $damage = Minecraft::NBT::Short->new({name => 'Damage', payload => $args->{damage} || 0});
-        push @{$nbt_data->payload}, $damage;
+        $nbt_data->add_child($damage);
 
         my $count = Minecraft::NBT::Byte->new({name => 'Count', payload => $args->{count}});
-        push @{$nbt_data->payload}, $count;
+        $nbt_data->add_child($count);
 
         if (defined $args->{slot}) {
             my $slot = Minecraft::NBT::Byte->new({name => 'Slot', payload => $args->{slot}});
-            push @{$nbt_data->payload}, $slot;
+            $nbt_data->add_child($slot);
         }
         $args->{inventory_nbt_data} = $nbt_data;
     }

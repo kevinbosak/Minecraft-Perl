@@ -199,6 +199,7 @@ Readonly my $ALL_ITEMS => {
     353 => 'sugar',
     354 => 'cake',
     358 => 'map',
+    359 => 'shears',
     2256 => 'gold music disc',
     2257 => 'green music disc',
 };
@@ -382,6 +383,8 @@ Readonly my $INVENTORY_ITEMS => [qw(
     352
     353
     354
+    358
+    359
     2256
     2257
 )];

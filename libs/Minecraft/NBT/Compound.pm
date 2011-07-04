@@ -11,6 +11,14 @@ has '+tag_type' => (
     default => 10,
 );
 
+sub add_child {
+    my ($self, $child) = @_;
+
+    my $children = $self->payload || [];
+    push @$children, $child;
+    $self->payload($children);
+}
+
 sub remove_child_by_name {
     my ($self, $name) = @_;
     return unless $name;

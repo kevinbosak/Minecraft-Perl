@@ -128,20 +128,6 @@ has 'random_seed' => (
     lazy => 1,
 );
 
-has 'snow_covered' => (
-    is => 'rw',
-    isa => 'Bool',
-    default => sub { 
-            my $self = shift;
-            return $self->level_nbt_data->get_child_by_name('SnowCovered')->payload;
-        },
-    trigger => sub {
-            my ($self, $new_val, $old_val) = @_;
-            $self->level_nbt_data->get_child_by_name('SnowCovered')->payload($new_val);
-        },
-    lazy => 1,
-);
-
 has 'chunks' => (
     is => 'rw',
     isa => 'Maybe[HashRef]',

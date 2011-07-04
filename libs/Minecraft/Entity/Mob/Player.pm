@@ -10,28 +10,33 @@ has 'inventory' => (
             my $self = shift;
             if (my $entity_data = $self->entity_nbt_data) {
                 my $inventory_nbt = $entity_data->get_child_by_name('Inventory');
-                if ($inventory_nbt) {
-                    require Minecraft::InventoryItem;
-                    my $items = $inventory_nbt->payload || [];
-                    my $return = [];
-                    for my $item_nbt (@$items) {
-                        push @$return, Minecraft::InventoryItem->new({inventory_nbt_data => $item_nbt});
-                    }
-                    return $return;
+                if (!$inventory_nbt) {
+                    require Minecraft::NBT::List;
+                    my $inventory_nbt = Minecraft::NBT::List->new({name => 'Inventory', subtag_type => 10});
+                    $entity_data->add_child($inventory_nbt);
                 }
+
+                require Minecraft::InventoryItem;
+                my $items = $inventory_nbt->payload || [];
+                my $return = [];
+                for my $item_nbt (@$items) {
+                    push @$return, Minecraft::InventoryItem->new({inventory_nbt_data => $item_nbt});
+                }
+                return $return;
             }
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $data = $self->entity_nbt_data) {
-                my $inventory_nbt = $data->get_child_by_name('Inventory');
+            if (my $entity = $self->entity_nbt_data) {
+                my $inventory_nbt = $entity->get_child_by_name('Inventory');
                 if (!$inventory_nbt) {
-                    $inventory_nbt = Minecraft::NBT::List->new({name => 'Entities', subtag_type => 10});
-                    $data->payload->{'Inventory'} = $inventory_nbt;
+                    $inventory_nbt = Minecraft::NBT::List->new({name => 'Inventory', subtag_type => 10});
+                    $entity->add_child($inventory_nbt);
                 }
                 $new_val ||= [];
                 my @inventory = ();
                 for my $item (@$new_val) {
+                    warn "Saving item";
                     push @inventory, $item->inventory_nbt_data;
                 }
                 $inventory_nbt->payload(\@inventory);
@@ -59,6 +64,20 @@ has 'score' => (
     lazy => 1,
 );
 
+has 'dimension' => (
+    is => 'rw',
+    isa => 'Int',
+    default => sub { 
+            my $self = shift;
+            return $self->level_nbt_data->get_child_by_name('Dimension')->payload;
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            $self->level_nbt_data->get_child_by_name('Dimension')->payload($new_val);
+        },
+    lazy => 1,
+);
+
 # checks slots and adds item appropriately, 
 #   with no slot specified, adds to first empty slot if any
 sub add_item {
@@ -76,8 +95,8 @@ sub add_item {
             $items->[$slots_taken->{$slot}] = $new_item;
             $self->inventory($items);
         } else {
-            $self->inventory($items);
             push @$items, $new_item;
+            $self->inventory($items);
         }
         return $new_item;
     }

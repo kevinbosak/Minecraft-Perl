@@ -6,7 +6,7 @@ use Minecraft::Util;
 #my $FH;
 #open $FH, "bigtest.nbt" or die "Could not open file";
 #local $\;
-my $nbt = Minecraft::NBT->parse_from_file({file => 'level.dat', is_named => 1});
+my $nbt = Minecraft::NBT->parse_from_file({file => 'world/0/0/c.0.0.dat', is_named => 1});
 #close $FH;
 
 my $data = $nbt->as_nbt;
@@ -19,4 +19,3 @@ my $data = $nbt->as_nbt;
 my $FH = Minecraft::Util::get_write_fh('out.dat');
 print $FH $data;
 close $FH;
-bin
