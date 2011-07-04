@@ -2,12 +2,7 @@ package Minecraft::Map::Chunk;
 
 use Mouse;
 
-use Minecraft::NBT::Compound;
-use Minecraft::NBT::ByteArray;
-use Minecraft::NBT::Byte;
-use Minecraft::NBT::Int;
-use Minecraft::NBT::Long;
-use Minecraft::NBT::List;
+use Minecraft::Entity;
 
 has 'chunk_nbt_data' => (
     is => 'rw',
@@ -129,8 +124,37 @@ has 'height_map' => (
 
 has 'entities' => (
     is => 'rw',
-    isa => 'ArrayRef',
-    default => sub { [] },
+    isa => 'Maybe[ArrayRef]',
+    default => sub { 
+            my $self = shift;
+            if (my $chunk_data = $self->chunk_nbt_data) {
+                my $entity_nbt = $chunk_data->get_child_by_name('Entities');
+                if ($entity_nbt) {
+                    my $entities = $entity_nbt->payload;
+                    my $return = [];
+                    for my $entity_nbt (@$entities) {
+                        push @$return, Minecraft::Entity->new({entity_nbt_data => $entity_nbt});
+                    }
+                    return $return;
+                }
+            }
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $chunk_data = $self->chunk_nbt_data) {
+                my $entity_nbt = $chunk_data->get_child_by_name('Entities');
+                if (my $entities = $self->entities) {
+                    my $return = [];
+                    for my $entity (@$entities) {
+                        push @$return, $entity->entity_nbt_data;
+                    }
+                    $entity_nbt ||= Minecraft::NBT::List->new({name => 'Entities', subtag_type => 10});
+                    $entity_nbt->payload($return);
+                } else {
+                    # make sure the entities nbt is gone from the chunk
+                }
+            }
+        },
 );
 
 has 'tile_entities' => (
@@ -141,11 +165,17 @@ has 'tile_entities' => (
 
 has 'last_update' => (
     is => 'rw',
-    isa => 'Int',
+    isa => 'Math::BigInt',
     default => sub {
             my $self = shift;
             if (my $chunk_data = $self->chunk_nbt_data) {
                 return $chunk_data->get_child_by_name('Level')->get_child_by_name('LastUpdate')->payload;
+            }
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $chunk_data = $self->chunk_nbt_data) {
+	            $chunk_data->get_child_by_name('LastUpdate')->payload($new_val);
             }
         },
     lazy => 1,
@@ -160,6 +190,12 @@ has 'x_pos' => (
                 return $chunk_data->get_child_by_name('Level')->get_child_by_name('xPos')->payload;
             }
         },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $chunk_data = $self->chunk_nbt_data) {
+	            $chunk_data->get_child_by_name('xPos')->payload($new_val);
+            }
+        },
     lazy => 1,
 );
 
@@ -170,6 +206,12 @@ has 'z_pos' => (
             my $self = shift;
             if (my $chunk_data = $self->chunk_nbt_data) {
                 return $chunk_data->get_child_by_name('Level')->get_child_by_name('zPos')->payload;
+            }
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $chunk_data = $self->chunk_nbt_data) {
+	            $chunk_data->get_child_by_name('zPos')->payload($new_val);
             }
         },
     lazy => 1,
@@ -184,6 +226,12 @@ has 'terrain_populated' => (
                 return $chunk_data->get_child_by_name('Level')->get_child_by_name('TerrainPopulated')->payload;
             }
             return 0;
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $chunk_data = $self->chunk_nbt_data) {
+	            $chunk_data->get_child_by_name('TerrainPopulated')->payload($new_val);
+            }
         },
     lazy => 1,
 );
@@ -210,6 +258,8 @@ sub get_block_height {
     return $blocks->[$i];
 }
 
+# This could be used when an NBT object was not used to initialize this object
+# ie. creating a new chunk from scratch
 sub as_nbt_object {
     my $self = shift;
 
@@ -218,8 +268,13 @@ sub as_nbt_object {
     # create a wrapper object
 }
 
-sub as_nbt {
-    return $_->as_nbt_object->as_nbt;
+# return the internal nbt object wrapped in the necessary compound tag and converted to raw data
+sub as_nbt_data {
+    my $self = shift;
+    require Minecraft::NBT::Compound;
+
+    my $nbt = Minecraft::NBT::Compound->new({name => '', payload => [$self->chunk_nbt_data]});
+    return $nbt->as_nbt;
 }
 
 1;
