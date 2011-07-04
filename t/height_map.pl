@@ -1,8 +1,9 @@
 #!/usr/bin/perl
 
+use lib '../libs';
+
 use Minecraft::NBT;
 use Minecraft::Util;
-use Minecraft::Map::Util;
 use Data::Dumper;
 
 $Data::Dumper::Terse = 1;
@@ -23,10 +24,23 @@ my $z_offset = 0 - $min_z*16;
 my $height_data = [];
 my $empty_chunk = [];
 
+my $loaded_regions = {};
+
 for my $chunk_x ($min_x .. $max_x) {
     for my $chunk_z ($min_z..$max_z) {
     print "Chunk $chunk_x, $chunk_z\n";
-        my $chunk = Minecraft::Map::Util->load_chunk_from_file({path => 'world', chunk_x => $chunk_x, chunk_z => $chunk_z});
+        my ($region_x, $region_z) = Minecraft::Util::get_chunk_region({chunk_x => $chunk_x, chunk_z => $chunk_z});
+        my $region = $loaded_regions->{$region_x . '_' . $region_z};
+        if (!$region) {
+            $region = Minecraft::Util::load_region_from_file({
+                    path => '/Users/kevinbosak/Library/Application Support/minecraft/saves/Bob/region/',
+                    region_x => $region_x,
+                    region_z => $region_z,
+                });
+            die "Could not load region $region_x,$region_z" unless $region;
+            $loaded_regions->{$region_x . '_' . $region_z} = $region;
+        }
+        my $chunk = $region->get_chunk({absolute_x => $chunk_x, absolute_z => $chunk_z});
 
         for my $z (0..15) {
             my @stuff = map {sprintf('%02d', $_)} @{$chunk->height_map}[$z*16 .. 16*$z+15] if $chunk;
