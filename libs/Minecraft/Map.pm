@@ -1,6 +1,7 @@
 package Minecraft::Map;
 
 use Minecraft::Util;
+use Minecraft::NBT;
 
 use Mouse;
 
