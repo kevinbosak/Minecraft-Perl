@@ -14,12 +14,12 @@ has 'level_nbt_data' => (
 
 has 'path' => (
     is => 'rw',
-    isa => 'String',
+    isa => 'Str',
 );
 
 has 'time' => (
     is => 'rw',
-    isa => 'Int',
+    isa => 'Math::BigInt',
     default => sub { 
             my $self = shift;
             return $self->level_nbt_data->get_child_by_name('Time')->payload;
