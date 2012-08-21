@@ -9,14 +9,15 @@ use Compress::Zlib;
 has 'full_path' => (
     is => 'rw',
     isa => 'Str',
-    default => sub {
-        my $self = shift;
-        my $x = $self->region_x;
+    default => sub{
+		my $self = shift;
+		my $x = $self->region_x;
         my $z = $self->region_z;
         my $path = $self->path;
         $path .= '/' unless substr($path,-1,1) eq '/';
-        $path . join('.', 'r', $x, $z, 'mcr');
-    },
+        $path .= join('.', 'r', $x, $z, 'mca');
+		return $path;
+	},
     lazy => 1,
 );
 has 'path' => (
@@ -87,17 +88,24 @@ sub get_chunk {
         $x = $args->{absolute_x} % 32;
         $z = $args->{absolute_z} % 32;
     }
+	
+	#print "Reading Chunk at $x,$z\n";
 
     die "You must specify valid coordinates" unless defined $x && defined $z;
 
+	#if(!defined $self->full_path && (defined $self->path && defined $self->region_x && defined $self->region_z)){
+	#}
+	
     my $chunk;
     {
         my $FH;
+		#print "Opening file '".$self->full_path."'\n";
+		
         open ($FH, "<", $self->full_path) or die "Could not open " . $self->full_path;
         binmode $FH;
 
         my $seek_loc = 4*(($x%32)+($z%32)*32);
-        my $location_data;
+		my $location_data;
         seek($FH, $seek_loc, 0);
         read($FH, $location_data, 4) or die "FOO";
 
@@ -105,14 +113,16 @@ sub get_chunk {
         my $data_offset;
         eval "\$data_offset = $bit_string";
         my $length = unpack('W', substr($location_data, 0, 1, ''));
-
+		#print "\$seek_loc: $seek_loc -> $length\n";
         return if $length == 0 && $data_offset == 0;
-
+		
         my $timestamp_data;
         seek($FH, $seek_loc+4096, 0);
         read($FH, $timestamp_data, 4) or die "FOO";
 
         my $timestamp = unpack('l>', $timestamp_data);
+		
+		#print "Chunk last edited '$timestamp'\n";
 
         my $chunk_data;
         seek($FH, $data_offset*4096, 0);
@@ -134,8 +144,8 @@ sub get_chunk {
 
         # decompress
         my $nbt_data = Minecraft::NBT->parse_data({data => \$decompressed_data, is_named => 1});
-        $chunk = Minecraft::Map::Chunk->new({chunk_nbt_data => $nbt_data});
-
+		$chunk = Minecraft::Map::Chunk->new({chunk_nbt_data => $nbt_data});
+		
         close $FH;
     }
     return $chunk;

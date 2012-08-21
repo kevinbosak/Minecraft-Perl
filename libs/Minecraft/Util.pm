@@ -9,7 +9,7 @@ Readonly my $ALL_ITEMS => {
     2   => 'grass',
     3   => 'dirt',
     4   => 'cobblestone',
-    5   => 'wood',
+    5   => 'planks',
     6   => 'sapling',
     7   => 'bedrock',
     8   => 'water',
@@ -21,7 +21,7 @@ Readonly my $ALL_ITEMS => {
     14  => 'gold ore',
     15  => 'iron ore',
     16  => 'coal ore',
-    17  => 'log',
+    17  => 'wood',
     18  => 'leaves',
     19  => 'sponge',
     20  => 'glass',
@@ -35,21 +35,23 @@ Readonly my $ALL_ITEMS => {
     28 => 'detector rail',
     29 => 'sticky piston',
     30 => 'cobweb',
-    31 => 'plant',
-    32 => 'dead shrub',
+    31 => 'tall grass',
+    32 => 'dead bush',
     33 => 'piston',
-    35  => 'cloth',
+	34 => 'piston extension',
+    35 => 'wool',
+	36 => 'block moved by piston',
     37  => 'yellow flower',
     38  => 'red flower',
     39  => 'brown mushroom',
     40  => 'red mushroom',
-    41  => 'violet gold block',
+    41  => 'gold block',
     42  => 'iron block',
     43  => 'double slab',
     44  => 'slab',
     45  => 'brick',
     46  => 'TNT',
-    47  => 'bookcase',
+    47  => 'bookshelf',
     48  => 'mossy cobblestone',
     49  => 'obsidian',
     50  => 'torch',
@@ -68,7 +70,7 @@ Readonly my $ALL_ITEMS => {
     63  => 'sign post',
     64  => 'wooden door',
     65  => 'ladder',
-    66  => 'minecart tracks',
+    66  => 'rails',
     67  => 'cobblestone stairs',
     68  => 'wall sign', # hide
     69  => 'lever',
@@ -82,7 +84,7 @@ Readonly my $ALL_ITEMS => {
     77  => 'stone button',
     78  => 'snow',
     79  => 'ice',
-    80  => 'snow',
+    80  => 'snow block',
     81  => 'cactus',
     82  => 'clay', # hide
     83  => 'reed', # hide
@@ -97,7 +99,17 @@ Readonly my $ALL_ITEMS => {
     92 => 'cake block',
     93 => 'redstone repeater',
     94 => 'redstone repeater',
+	95 => 'locked chest',
     96 => 'trapdoor',
+	97 => 'monster egg',
+	98 => 'stone bricks',
+	99 => 'huge brown mushroom',
+	100 => 'huge red mushroom',
+	101 => 'iron bars',
+	102 => 'glass pane',
+	103 => 'melon',
+	104 => 'pumpkin stem',
+	105 => 'melon stem',
 
     256 => 'iron spade',
     257 => 'iron pickaxe',
@@ -236,7 +248,9 @@ Readonly my $INVENTORY_ITEMS => [qw(
     31
     32
     33
-    35  
+	34
+    35
+	36	
     37  
     38  
     39  
@@ -281,6 +295,8 @@ Readonly my $INVENTORY_ITEMS => [qw(
     91
     92
     93
+	94
+	95
     96
 
     256 
@@ -493,7 +509,9 @@ sub get_item_name {
     if ($id eq __PACKAGE__) {
         $id = shift;
     }
-    return $ITEMS->{$id};
+	my $return = $ALL_ITEMS->{$id};
+	if(!$return){$return="<unknown>";}
+    return $return;
 }
 
 sub get_item_id {

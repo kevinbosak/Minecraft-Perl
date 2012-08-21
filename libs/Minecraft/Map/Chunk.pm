@@ -11,13 +11,14 @@ has 'chunk_nbt_data' => (
 
 has 'blocks' => (
     is => 'rw',
-    isa => 'ArrayRef[Int]',
+    isa => 'ArrayRef[Str]',
     default => sub { 
             my $self = shift;
-            if (my $chunk_data = $self->chunk_nbt_data) {
-                my $block_data = $chunk_data->get_child_by_name('Level')->get_child_by_name('Blocks')->payload;
-                my @blocks = unpack('C*', $block_data);
-                return \@blocks;
+			if (my $chunk_data = $self->chunk_nbt_data) {
+                my $block_data = $self->get_tag_from_sections('Blocks');
+				my @blocks = unpack('W*', $block_data);
+				#my @blocks = split(//,"$block_data");
+				return \@blocks;
             }
         },
     trigger => sub {
@@ -105,8 +106,6 @@ has 'height_map' => (
     default => sub { 
             my $self = shift;
             if (my $chunk_data = $self->chunk_nbt_data) {
-#                my $block_data = $chunk_data->get_child_by_name('HeightMap')->payload;
-
                 my $block_data = $chunk_data->get_child_by_name('Level')->get_child_by_name('HeightMap')->payload;
                 my @blocks = unpack('C*', $block_data);
                 return \@blocks;
@@ -128,7 +127,7 @@ has 'entities' => (
     default => sub { 
             my $self = shift;
             if (my $chunk_data = $self->chunk_nbt_data) {
-                my $entity_nbt = $chunk_data->get_child_by_name('Entities');
+                my $entity_nbt = $chunk_data->get_child_by_name('Level')->get_child_by_name('Entities');
                 if ($entity_nbt) {
                     my $entities = $entity_nbt->payload;
                     my $return = [];
@@ -236,6 +235,21 @@ has 'terrain_populated' => (
     lazy => 1,
 );
 
+sub get_tag_from_sections {
+	my $self = shift;
+	my $tag_name = shift;
+    if (my $chunk_data = $self->chunk_nbt_data) {
+		my $sections = $chunk_data->get_child_by_name('Level')->get_child_by_name('Sections')->payload;
+		my $return = '';
+		foreach my $section (@$sections){
+			$return .= $section->get_child_by_name($tag_name)->payload;
+			my $Y = $section->get_child_by_name('Y')->payload;
+			#print "Section $Y: ".length($return)."\n";
+		}
+		return $return;
+	}
+}
+
 sub get_block_type {
     my ($self, $x, $y, $z) = @_;
     die "Must specify x, y, and z" unless defined $x && defined $z && defined $y;
@@ -243,8 +257,8 @@ sub get_block_type {
     my $blocks = $self->blocks;
     return unless $blocks && scalar @$blocks;
 
-    my $i = $y + ($z*128 + ($x*128*16));
-    return $blocks->[$i];
+    my $i = $y*16*16 + $z*16 + $x;
+	return $blocks->[$i];
 }
 
 sub get_block_height {
