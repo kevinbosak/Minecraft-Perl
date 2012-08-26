@@ -180,6 +180,24 @@ has 'last_update' => (
     lazy => 1,
 );
 
+has 'timestamp' => (
+    is => 'rw',
+    isa => 'Int',
+    # default => sub {
+            # my $self = shift;
+            # if (my $chunk_data = $self->chunk_nbt_data) {
+                # return $chunk_data->get_child_by_name('Level')->get_child_by_name('LastUpdate')->payload;
+            # }
+        # },
+    # trigger => sub {
+            # my ($self, $new_val, $old_val) = @_;
+            # if (my $chunk_data = $self->chunk_nbt_data) {
+	            # $chunk_data->get_child_by_name('LastUpdate')->payload($new_val);
+            # }
+        # },
+    # lazy => 1,
+);
+
 has 'x_pos' => (
     is => 'rw',
     isa => 'Int',

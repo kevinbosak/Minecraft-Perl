@@ -1,0 +1,14 @@
+- Read Add from Sections
+- Calculate Data Values by adding the Add-tag
+- Read Data from Sections
+- Read BlockLight from Sections
+- Read SkyLight from Sections
+
+- Write Blocks to Sections
+- Write Add to Sections
+- Write Data to Sections
+- Write BlockLight to Sections
+- Write SkyLight to Sections
+
+- Less repeating code in Region.pm
+- Timestamp filter

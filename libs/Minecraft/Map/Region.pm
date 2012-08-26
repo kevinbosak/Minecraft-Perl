@@ -43,21 +43,21 @@ has 'region_z' => (
     isa => 'Int',
 );
 
-has 'chunk_locations' => (
-    is => 'ro', # write through 'set_chunk'
-    isa => 'HashRef',
-);
+# has 'chunk_locations' => (
+    # is => 'ro', # write through 'set_chunk'
+    # isa => 'HashRef',
+# );
 
-has 'chunk_timestamps' => (
-    is => 'rw',
-    isa => 'HashRef',
-);
+# has 'chunk_timestamps' => (
+    # is => 'rw',
+    # isa => 'HashRef',
+# );
 
-has 'chunks' => (
-    is => 'rw',
-    isa => 'HashRef',
-    default => sub { {} },
-);
+# has 'chunks' => (
+    # is => 'rw',
+    # isa => 'HashRef[Minecraft::Map::Chunk]',
+    # default => sub { {} },
+# );
 
 sub set_chunk {
     my ($self, $args) = @_;
@@ -89,12 +89,7 @@ sub get_chunk {
         $z = $args->{absolute_z} % 32;
     }
 	
-	#print "Reading Chunk at $x,$z\n";
-
     die "You must specify valid coordinates" unless defined $x && defined $z;
-
-	#if(!defined $self->full_path && (defined $self->path && defined $self->region_x && defined $self->region_z)){
-	#}
 	
     my $chunk;
     {
@@ -131,7 +126,7 @@ sub get_chunk {
         my $foo = substr($chunk_data, 0, 4);
         my $chunk_length = unpack('l>', substr($chunk_data, 0, 4, ''));
         my $compression_type = unpack('W', substr($chunk_data, 0, 1, ''));
-        my $compressed_data = substr($chunk_data, 0, $chunk_length);
+        my $compressed_data = substr($chunk_data, 0, $length);
 
         my $decompressed_data;
 
@@ -156,15 +151,57 @@ sub get_chunk {
 #    return $chunks->{$x . '_' . $z};
 }
 
-sub parse_raw_data {
-    my ($self, $raw_data) = @_;
-    my $location_data = substr($raw_data, 0, 4096, '');
-    my $timestamp_data = substr($raw_data, 0, 4096, '');
+
+sub get_chunk_count{
+	my $self = shift;
+
+	my $FH;
+	open ($FH, "<", $self->full_path) or die "Could not open " . $self->full_path;
+	binmode $FH;
+	
+	local $/;
+	my $data = <$FH>;
+	close $FH;
+	
+    my $location_data = substr($data, 0, 4096, '');
+    # my $timestamp_data = substr($data, 0, 4096, '');
 
     my $x_offset = 0;
     my $z_offset = 0;
 
-    my $chunks = $self->chunks;
+    my $chunk_count = 0;
+	
+    for my $i (0..1023) {
+        # TODO: cleaner way of doing this with pack?
+        my $bit_string = '0b0' . unpack('B*', substr($location_data, 0, 3, ''));
+        my $data_offset;
+        eval "\$data_offset = $bit_string";
+
+        my $length = unpack('W', substr($location_data, 0, 1, ''));
+        # my $timestamp = unpack('l>', substr($timestamp_data, 0, 4, ''));
+
+        if($data_offset && $length){$chunk_count++;}
+	}
+	return $chunk_count;
+}
+
+# Reads all chunks in a Region. Faster than fetching them one by one.
+sub get_chunk_arr {
+	my $self = shift;
+	my $timestamp_filter = shift; #array of 1024 timestamps, value of 0 = null, if timestamp matches don't load chunk
+
+	my $FH;
+	open ($FH, "<", $self->full_path) or die "Could not open " . $self->full_path;
+	binmode $FH;
+	
+	local $/;
+	my $data = <$FH>;
+	close $FH;
+	
+    my $location_data = substr($data, 0, 4096, '');
+    my $timestamp_data = substr($data, 0, 4096, '');
+
+    my @chunks = ();
 
     for my $i (0..1023) {
         # TODO: cleaner way of doing this with pack?
@@ -181,7 +218,7 @@ sub parse_raw_data {
         $length *= 4096;  # stored length was 4k sectors, now it's in bytes
         $data_offset *= 4096;
 
-        my $chunk_data = substr($raw_data, $data_offset, $length);
+        my $chunk_data = substr($data, $data_offset, $length);
         my $chunk_length = unpack('l>', substr($chunk_data, 0, 4, ''));
         my $compression_type = unpack('W', substr($chunk_data, 0, 1, ''));
         my $compressed_data = substr($chunk_data, 0, $length);
@@ -198,14 +235,10 @@ sub parse_raw_data {
         # decompress
         my $nbt_data = Minecraft::NBT->parse_data({data => \$decompressed_data, is_named => 1});
         my $chunk = Minecraft::Map::Chunk->new({chunk_nbt_data => $nbt_data});
-        $chunks->{$x_offset . '_' . $z_offset} = $chunk;
-
-        $x_offset++;
-        if ($x_offset == 32) {
-            $x_offset = 0;
-            $z_offset++;
-        }
+		$chunk->timestamp($timestamp);
+        push (@chunks,$chunk);
     }
+	return @chunks;
 }
 
 1;
