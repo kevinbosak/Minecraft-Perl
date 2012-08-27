@@ -3,6 +3,7 @@ package Minecraft::Map::Chunk;
 use Mouse;
 
 use Minecraft::Entity;
+use Minecraft::TileEntity;
 
 has 'chunk_nbt_data' => (
     is => 'rw',
@@ -127,9 +128,9 @@ has 'entities' => (
     default => sub { 
             my $self = shift;
             if (my $chunk_data = $self->chunk_nbt_data) {
-                my $entity_nbt = $chunk_data->get_child_by_name('Level')->get_child_by_name('Entities');
-                if ($entity_nbt) {
-                    my $entities = $entity_nbt->payload;
+                my $entities_nbt = $chunk_data->get_child_by_name('Level')->get_child_by_name('Entities');
+                if ($entities_nbt) {
+                    my $entities = $entities_nbt->payload;
                     my $return = [];
                     for my $entity_nbt (@$entities) {
                         push @$return, Minecraft::Entity->new({entity_nbt_data => $entity_nbt});
@@ -159,7 +160,36 @@ has 'entities' => (
 has 'tile_entities' => (
     is => 'rw',
     isa => 'ArrayRef',
-    default => sub { [] },
+    default => sub { 
+            my $self = shift;
+            if (my $chunk_data = $self->chunk_nbt_data) {
+                my $entities_nbt = $chunk_data->get_child_by_name('Level')->get_child_by_name('TileEntities');
+                if ($entities_nbt) {
+                    my $entities = $entities_nbt->payload;
+                    my $return = [];
+                    for my $entity_nbt (@$entities) {
+                        push @$return, Minecraft::TileEntity->new({entity_nbt_data => $entity_nbt});
+                    }
+                    return $return;
+                }
+            }
+        },
+    trigger => sub {
+            my ($self, $new_val, $old_val) = @_;
+            if (my $chunk_data = $self->chunk_nbt_data) {
+                my $entity_nbt = $chunk_data->get_child_by_name('TileEntities');
+                if (my $entities = $self->entities) {
+                    my $return = [];
+                    for my $entity (@$entities) {
+                        push @$return, $entity->entity_nbt_data;
+                    }
+                    $entity_nbt ||= Minecraft::NBT::List->new({name => 'TileEntities', subtag_type => 10});
+                    $entity_nbt->payload($return);
+                } else {
+                    # make sure the entities nbt is gone from the chunk
+                }
+            }
+        },
 );
 
 has 'last_update' => (

@@ -9,7 +9,7 @@ has 'entity_nbt_data' => (
 
 has 'id' => (
     is => 'rw',
-    isa => 'Maybe[Int]',
+    isa => 'Maybe[Str]',
     default => sub {
             my $self = shift;
             if (my $data = $self->entity_nbt_data) {

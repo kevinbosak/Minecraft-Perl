@@ -75,7 +75,8 @@ sub set_chunk {
 }
 
 # getting these as-needed, don't parse the whole file
-# FIXME: cache chunks by storing in chunks attribute  
+# FIXME: cache chunks by storing in chunks attribute
+#TODO chunk pos calculated different with negative chunk coordinates  
 sub get_chunk {
     my ($self, $args) = @_;
 
@@ -94,7 +95,6 @@ sub get_chunk {
     my $chunk;
     {
         my $FH;
-		#print "Opening file '".$self->full_path."'\n";
 		
         open ($FH, "<", $self->full_path) or die "Could not open " . $self->full_path;
         binmode $FH;
@@ -108,7 +108,6 @@ sub get_chunk {
         my $data_offset;
         eval "\$data_offset = $bit_string";
         my $length = unpack('W', substr($location_data, 0, 1, ''));
-		#print "\$seek_loc: $seek_loc -> $length\n";
         return if $length == 0 && $data_offset == 0;
 		
         my $timestamp_data;
@@ -117,8 +116,6 @@ sub get_chunk {
 
         my $timestamp = unpack('l>', $timestamp_data);
 		
-		#print "Chunk last edited '$timestamp'\n";
-
         my $chunk_data;
         seek($FH, $data_offset*4096, 0);
         read($FH, $chunk_data, $length*4096) or die "FOO";
@@ -140,7 +137,7 @@ sub get_chunk {
         # decompress
         my $nbt_data = Minecraft::NBT->parse_data({data => \$decompressed_data, is_named => 1});
 		$chunk = Minecraft::Map::Chunk->new({chunk_nbt_data => $nbt_data});
-		
+		$chunk->timestamp($timestamp);
         close $FH;
     }
     return $chunk;
@@ -164,7 +161,7 @@ sub get_chunk_count{
 	close $FH;
 	
     my $location_data = substr($data, 0, 4096, '');
-    # my $timestamp_data = substr($data, 0, 4096, '');
+    my $timestamp_data = substr($data, 0, 4096, '');
 
     my $x_offset = 0;
     my $z_offset = 0;
@@ -178,7 +175,7 @@ sub get_chunk_count{
         eval "\$data_offset = $bit_string";
 
         my $length = unpack('W', substr($location_data, 0, 1, ''));
-        # my $timestamp = unpack('l>', substr($timestamp_data, 0, 4, ''));
+        my $timestamp = unpack('l>', substr($timestamp_data, 0, 4, ''));
 
         if($data_offset && $length){$chunk_count++;}
 	}
