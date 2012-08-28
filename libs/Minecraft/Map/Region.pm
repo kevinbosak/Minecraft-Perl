@@ -136,7 +136,7 @@ sub get_chunk {
 
         # decompress
         my $nbt_data = Minecraft::NBT->parse_data({data => \$decompressed_data, is_named => 1});
-		$chunk = Minecraft::Map::Chunk->new({chunk_nbt_data => $nbt_data});
+		$chunk = Minecraft::Map::Chunk->new({nbt_data => $nbt_data});
 		$chunk->timestamp($timestamp);
         close $FH;
     }
@@ -231,7 +231,7 @@ sub get_chunk_arr {
 
         # decompress
         my $nbt_data = Minecraft::NBT->parse_data({data => \$decompressed_data, is_named => 1});
-        my $chunk = Minecraft::Map::Chunk->new({chunk_nbt_data => $nbt_data});
+        my $chunk = Minecraft::Map::Chunk->new({nbt_data => $nbt_data});
 		$chunk->timestamp($timestamp);
         push (@chunks,$chunk);
     }

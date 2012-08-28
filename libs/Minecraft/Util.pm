@@ -212,6 +212,8 @@ Readonly my $ALL_ITEMS => {
     354 => 'cake',
     358 => 'map',
     359 => 'shears',
+	361 => 'pumpkin seeds',
+	362 => 'melon seeds',
     2256 => 'gold music disc',
     2257 => 'green music disc',
 };
@@ -510,7 +512,7 @@ sub get_item_name {
         $id = shift;
     }
 	my $return = $ALL_ITEMS->{$id};
-	if(!$return){$return="<unknown>";}
+	if(!$return){$return="<unknown($id)>";}
     return $return;
 }
 

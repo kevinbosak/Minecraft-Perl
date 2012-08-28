@@ -8,7 +8,7 @@ has 'inventory' => (
     isa => 'Maybe[ArrayRef]',
     default => sub { 
             my $self = shift;
-            if (my $entity_data = $self->entity_nbt_data) {
+            if (my $entity_data = $self->nbt_data) {
                 my $inventory_nbt = $entity_data->get_child_by_name('Inventory');
                 if (!$inventory_nbt) {
                     require Minecraft::NBT::List;
@@ -20,14 +20,14 @@ has 'inventory' => (
                 my $items = $inventory_nbt->payload || [];
                 my $return = [];
                 for my $item_nbt (@$items) {
-                    push @$return, Minecraft::InventoryItem->new({inventory_nbt_data => $item_nbt});
+                    push @$return, Minecraft::InventoryItem->new({nbt_data => $item_nbt});
                 }
                 return $return;
             }
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $entity = $self->entity_nbt_data) {
+            if (my $entity = $self->nbt_data) {
                 my $inventory_nbt = $entity->get_child_by_name('Inventory');
                 if (!$inventory_nbt) {
                     $inventory_nbt = Minecraft::NBT::List->new({name => 'Inventory', subtag_type => 10});
@@ -37,7 +37,7 @@ has 'inventory' => (
                 my @inventory = ();
                 for my $item (@$new_val) {
                     warn "Saving item";
-                    push @inventory, $item->inventory_nbt_data;
+                    push @inventory, $item->nbt_data;
                 }
                 $inventory_nbt->payload(\@inventory);
             }
@@ -50,14 +50,14 @@ has 'score' => (
     isa => 'Maybe[Int]',
     default => sub {
             my $self = shift;
-            if (my $data = $self->entity_nbt_data) {
+            if (my $data = $self->nbt_data) {
                 my $score_nbt = $data->get_child_by_name('Score');
                 return $score_nbt->payload if $score_nbt;
             }
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $data = $self->entity_nbt_data) {
+            if (my $data = $self->nbt_data) {
 	            $data->get_child_by_name('Score')->payload($new_val);
             }
         },

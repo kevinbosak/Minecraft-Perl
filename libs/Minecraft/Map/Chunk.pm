@@ -4,8 +4,11 @@ use Mouse;
 
 use Minecraft::Entity;
 use Minecraft::TileEntity;
+use Minecraft::TileEntity::Chest;
+use Minecraft::TileEntity::MobSpawner;
+use Minecraft::TileEntity::Furnace;
 
-has 'chunk_nbt_data' => (
+has 'nbt_data' => (
     is => 'rw',
     isa => 'Minecraft::NBT',
 );
@@ -15,7 +18,7 @@ has 'blocks' => (
     isa => 'ArrayRef[Str]',
     default => sub { 
             my $self = shift;
-			if (my $chunk_data = $self->chunk_nbt_data) {
+			if (my $chunk_data = $self->nbt_data) {
                 my $block_data = $self->get_tag_from_sections('Blocks');
 				my @blocks = unpack('W*', $block_data);
 				#my @blocks = split(//,"$block_data");
@@ -24,7 +27,7 @@ has 'blocks' => (
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 my $block_data = pack('C*', @$new_val);
 	            $chunk_data->get_child_by_name('Level')->get_child_by_name('Blocks')->payload($block_data);
             }
@@ -37,7 +40,7 @@ has 'data' => (
     isa => 'ArrayRef[Int]',
     default => sub { 
             my $self = shift;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 my $block_data = $chunk_data->get_child_by_name('Level')->get_child_by_name('Data')->payload;
                 my $block_string = unpack('H*', $block_data);
                 my @blocks = split('', $block_string);
@@ -46,7 +49,7 @@ has 'data' => (
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 my @blocks = join('', @$new_val);
                 my $block_data = pack('H*', @blocks);
 	            $chunk_data->get_child_by_name('Level')->get_child_by_name('Data')->payload($block_data);
@@ -60,7 +63,7 @@ has 'sky_light' => (
     isa => 'ArrayRef[Str]',
     default => sub { 
             my $self = shift;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 my $block_data = $chunk_data->get_child_by_name('Level')->get_child_by_name('SkyLight')->payload;
                 my $block_string = unpack('H*', $block_data);
                 my @blocks = split('', $block_string);
@@ -69,7 +72,7 @@ has 'sky_light' => (
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 my @blocks = join('', @$new_val);
                 my $block_data = pack('H*', @blocks);
 	            $chunk_data->get_child_by_name('Level')->get_child_by_name('SkyLight')->payload($block_data);
@@ -83,7 +86,7 @@ has 'block_light' => (
     isa => 'ArrayRef[Int]',
     default => sub { 
             my $self = shift;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 my $block_data = $chunk_data->get_child_by_name('Level')->get_child_by_name('BlockLight')->payload;
                 my $block_string = unpack('H*', $block_data);
                 my @blocks = split('', $block_string);
@@ -92,7 +95,7 @@ has 'block_light' => (
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 my @blocks = join('', @$new_val);
                 my $block_data = pack('H*', @blocks);
 	            $chunk_data->get_child_by_name('Level')->get_child_by_name('BlockLight')->payload($block_data);
@@ -106,7 +109,7 @@ has 'height_map' => (
     isa => 'ArrayRef[Int]',
     default => sub { 
             my $self = shift;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 my $block_data = $chunk_data->get_child_by_name('Level')->get_child_by_name('HeightMap')->payload;
                 my @blocks = unpack('C*', $block_data);
                 return \@blocks;
@@ -114,7 +117,7 @@ has 'height_map' => (
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 my $block_data = pack('C*', @$new_val);
 	            $chunk_data->get_child_by_name('Level')->get_child_by_name('HeightMap')->payload($block_data);
             }
@@ -127,13 +130,13 @@ has 'entities' => (
     isa => 'Maybe[ArrayRef]',
     default => sub { 
             my $self = shift;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 my $entities_nbt = $chunk_data->get_child_by_name('Level')->get_child_by_name('Entities');
                 if ($entities_nbt) {
                     my $entities = $entities_nbt->payload;
                     my $return = [];
                     for my $entity_nbt (@$entities) {
-                        push @$return, Minecraft::Entity->new({entity_nbt_data => $entity_nbt});
+                        push @$return, Minecraft::Entity->new({nbt_data => $entity_nbt});
                     }
                     return $return;
                 }
@@ -141,12 +144,12 @@ has 'entities' => (
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 my $entity_nbt = $chunk_data->get_child_by_name('Entities');
                 if (my $entities = $self->entities) {
                     my $return = [];
                     for my $entity (@$entities) {
-                        push @$return, $entity->entity_nbt_data;
+                        push @$return, $entity->nbt_data;
                     }
                     $entity_nbt ||= Minecraft::NBT::List->new({name => 'Entities', subtag_type => 10});
                     $entity_nbt->payload($return);
@@ -162,13 +165,22 @@ has 'tile_entities' => (
     isa => 'ArrayRef',
     default => sub { 
             my $self = shift;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 my $entities_nbt = $chunk_data->get_child_by_name('Level')->get_child_by_name('TileEntities');
                 if ($entities_nbt) {
                     my $entities = $entities_nbt->payload;
                     my $return = [];
                     for my $entity_nbt (@$entities) {
-                        push @$return, Minecraft::TileEntity->new({entity_nbt_data => $entity_nbt});
+						my $id = $entity_nbt->get_child_by_name('id')->payload;
+						if($id eq "Chest"){
+							push @$return, Minecraft::TileEntity::Chest->new({nbt_data => $entity_nbt});
+						} elsif($id eq "MobSpawner"){
+							push @$return, Minecraft::TileEntity::MobSpawner->new({nbt_data => $entity_nbt});
+						} elsif($id eq "Furnace"){
+							push @$return, Minecraft::TileEntity::Furnace->new({nbt_data => $entity_nbt});
+						} else {
+							push @$return, Minecraft::TileEntity->new({nbt_data => $entity_nbt});
+						}
                     }
                     return $return;
                 }
@@ -176,12 +188,12 @@ has 'tile_entities' => (
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 my $entity_nbt = $chunk_data->get_child_by_name('TileEntities');
                 if (my $entities = $self->entities) {
                     my $return = [];
                     for my $entity (@$entities) {
-                        push @$return, $entity->entity_nbt_data;
+                        push @$return, $entity->nbt_data;
                     }
                     $entity_nbt ||= Minecraft::NBT::List->new({name => 'TileEntities', subtag_type => 10});
                     $entity_nbt->payload($return);
@@ -197,13 +209,13 @@ has 'last_update' => (
     isa => 'Math::BigInt',
     default => sub {
             my $self = shift;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 return $chunk_data->get_child_by_name('Level')->get_child_by_name('LastUpdate')->payload;
             }
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
 	            $chunk_data->get_child_by_name('LastUpdate')->payload($new_val);
             }
         },
@@ -215,13 +227,13 @@ has 'timestamp' => (
     isa => 'Int',
     # default => sub {
             # my $self = shift;
-            # if (my $chunk_data = $self->chunk_nbt_data) {
+            # if (my $chunk_data = $self->nbt_data) {
                 # return $chunk_data->get_child_by_name('Level')->get_child_by_name('LastUpdate')->payload;
             # }
         # },
     # trigger => sub {
             # my ($self, $new_val, $old_val) = @_;
-            # if (my $chunk_data = $self->chunk_nbt_data) {
+            # if (my $chunk_data = $self->nbt_data) {
 	            # $chunk_data->get_child_by_name('LastUpdate')->payload($new_val);
             # }
         # },
@@ -233,13 +245,13 @@ has 'x_pos' => (
     isa => 'Int',
     default => sub {
             my $self = shift;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 return $chunk_data->get_child_by_name('Level')->get_child_by_name('xPos')->payload;
             }
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
 	            $chunk_data->get_child_by_name('xPos')->payload($new_val);
             }
         },
@@ -251,13 +263,13 @@ has 'z_pos' => (
     isa => 'Int',
     default => sub {
             my $self = shift;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 return $chunk_data->get_child_by_name('Level')->get_child_by_name('zPos')->payload;
             }
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
 	            $chunk_data->get_child_by_name('zPos')->payload($new_val);
             }
         },
@@ -269,14 +281,14 @@ has 'terrain_populated' => (
     isa => 'Bool',
     default => sub {
             my $self = shift;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
                 return $chunk_data->get_child_by_name('Level')->get_child_by_name('TerrainPopulated')->payload;
             }
             return 0;
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $chunk_data = $self->chunk_nbt_data) {
+            if (my $chunk_data = $self->nbt_data) {
 	            $chunk_data->get_child_by_name('TerrainPopulated')->payload($new_val);
             }
         },
@@ -286,7 +298,7 @@ has 'terrain_populated' => (
 sub get_tag_from_sections {
 	my $self = shift;
 	my $tag_name = shift;
-    if (my $chunk_data = $self->chunk_nbt_data) {
+    if (my $chunk_data = $self->nbt_data) {
 		my $sections = $chunk_data->get_child_by_name('Level')->get_child_by_name('Sections')->payload;
 		my $return = '';
 		foreach my $section (@$sections){
@@ -335,7 +347,7 @@ sub as_nbt_data {
     my $self = shift;
     require Minecraft::NBT::Compound;
 
-    my $nbt = Minecraft::NBT::Compound->new({name => '', payload => [$self->chunk_nbt_data]});
+    my $nbt = Minecraft::NBT::Compound->new({name => '', payload => [$self->nbt_data]});
     return $nbt->as_nbt;
 }
 
