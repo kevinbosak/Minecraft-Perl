@@ -69,8 +69,10 @@ has 'slot' => (
     default => sub {
             my $self = shift;
             if (my $data = $self->nbt_data) {
-                return $data->get_child_by_name('Slot')->payload;
+				my $slot = $data->get_child_by_name('Slot');
+                return $slot->payload if $slot;
             }
+			return undef;
         },
     trigger => sub {
             # FIXME: create NBT item if it doesn't already exist

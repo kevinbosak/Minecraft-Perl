@@ -3,10 +3,13 @@ package Minecraft::Map::Chunk;
 use Mouse;
 
 use Minecraft::Entity;
+use Minecraft::Entity::Mob::Villager;
+
 use Minecraft::TileEntity;
 use Minecraft::TileEntity::Chest;
 use Minecraft::TileEntity::MobSpawner;
 use Minecraft::TileEntity::Furnace;
+
 
 has 'nbt_data' => (
     is => 'rw',
@@ -136,7 +139,12 @@ has 'entities' => (
                     my $entities = $entities_nbt->payload;
                     my $return = [];
                     for my $entity_nbt (@$entities) {
-                        push @$return, Minecraft::Entity->new({nbt_data => $entity_nbt});
+						my $id = $entity_nbt->get_child_by_name('id')->payload;
+						if($id eq "Villager"){
+							push @$return, Minecraft::Entity::Mob::Villager->new({nbt_data => $entity_nbt});
+						} else {
+							push @$return, Minecraft::Entity->new({nbt_data => $entity_nbt});
+						}
                     }
                     return $return;
                 }
@@ -162,7 +170,7 @@ has 'entities' => (
 
 has 'tile_entities' => (
     is => 'rw',
-    isa => 'ArrayRef',
+    isa => 'Maybe[ArrayRef]',
     default => sub { 
             my $self = shift;
             if (my $chunk_data = $self->nbt_data) {
