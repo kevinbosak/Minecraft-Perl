@@ -558,6 +558,15 @@ Readonly my $DYES => [
     'bone meal',
 ];
 
+Readonly my $PROFESSIONS => [
+	'Farmer',
+	'Librarian',
+	'Priest',
+	'Blacksmith',
+	'Butcher',
+	'Villager',
+];
+
 # FIXME: need some way to denote damage is used for wool color
 
 sub item_has_damage {
@@ -595,6 +604,16 @@ sub get_item_name {
     }
 	my $return = $ALL_ITEMS->{$id};
 	if(!$return){$return="<unknown($id)>";}
+    return $return;
+}
+
+sub get_profession {
+    my $id = shift;
+    if ($id eq __PACKAGE__) {
+        $id = shift;
+    }
+	my $return = $PROFESSIONS->[$id];
+	if(!$return){$return="<unknown profession($id)>";}
     return $return;
 }
 

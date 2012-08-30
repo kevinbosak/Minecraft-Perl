@@ -19,3 +19,5 @@
 - Rename all nbt_data variables to 'nbt_data'
 
 - Move Chunk.pm and Region.pm out of Map-dir and remove the dir (update paths)
+
+- Level class (rename Map)

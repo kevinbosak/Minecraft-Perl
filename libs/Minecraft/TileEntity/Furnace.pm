@@ -98,6 +98,7 @@ sub _get_slot_item{
 			return Minecraft::InventoryItem->new({nbt_data => $item_nbt});
 		}
 	}
+	return undef;
 }
 
 1;

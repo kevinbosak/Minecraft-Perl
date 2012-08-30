@@ -156,12 +156,13 @@ sub get_chunk_count{
 	open ($FH, "<", $self->full_path) or die "Could not open " . $self->full_path;
 	binmode $FH;
 	
-	local $/;
-	my $data = <$FH>;
-	close $FH;
+	seek($FH, 0, 0);
+    my $location_data;
+	read($FH, $location_data, 4096);
 	
-    my $location_data = substr($data, 0, 4096, '');
-    my $timestamp_data = substr($data, 0, 4096, '');
+	seek($FH, 4096, 0);
+    my $timestamp_data;
+	read($FH, $timestamp_data, 4096);
 
     my $x_offset = 0;
     my $z_offset = 0;
@@ -191,17 +192,19 @@ sub get_chunk_arr {
 	open ($FH, "<", $self->full_path) or die "Could not open " . $self->full_path;
 	binmode $FH;
 	
-	local $/;
-	my $data = <$FH>;
-	close $FH;
+	seek($FH, 0, 0);
+    my $location_data;
+	read($FH, $location_data, 4096);
 	
-    my $location_data = substr($data, 0, 4096, '');
-    my $timestamp_data = substr($data, 0, 4096, '');
-
+	seek($FH, 4096, 0);
+    my $timestamp_data;
+	read($FH, $timestamp_data, 4096);
+	
     my @chunks = ();
 
     for my $i (0..1023) {
         # TODO: cleaner way of doing this with pack?
+		# print "Reading chunk $i \r";
         my $bit_string = '0b0' . unpack('B*', substr($location_data, 0, 3, ''));
         my $data_offset;
         eval "\$data_offset = $bit_string";
@@ -209,13 +212,13 @@ sub get_chunk_arr {
         my $length = unpack('W', substr($location_data, 0, 1, ''));
         my $timestamp = unpack('l>', substr($timestamp_data, 0, 4, ''));
 
-        next unless $data_offset && $length; # empty chunks have zero for both of these
+        next unless $data_offset && $length;  # empty chunks have zero for both of these
+		next if $timestamp_filter && @$timestamp_filter[$i] && @$timestamp_filter[$i] == $timestamp;
+		
+		my $chunk_data;
+        seek($FH, $data_offset*4096, 0);
+        read($FH, $chunk_data, $length*4096) or die "FOO";
 
-        $data_offset -= 2; # offset is now for remainder of raw data, not original raw data
-        $length *= 4096;  # stored length was 4k sectors, now it's in bytes
-        $data_offset *= 4096;
-
-        my $chunk_data = substr($data, $data_offset, $length);
         my $chunk_length = unpack('l>', substr($chunk_data, 0, 4, ''));
         my $compression_type = unpack('W', substr($chunk_data, 0, 1, ''));
         my $compressed_data = substr($chunk_data, 0, $length);
@@ -236,6 +239,7 @@ sub get_chunk_arr {
         push (@chunks,$chunk);
     }
 	return @chunks;
+	close $FH;
 }
 
 1;
