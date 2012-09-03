@@ -204,7 +204,6 @@ sub get_chunk_arr {
 
     for my $i (0..1023) {
         # TODO: cleaner way of doing this with pack?
-		# print "Reading chunk $i \r";
         my $bit_string = '0b0' . unpack('B*', substr($location_data, 0, 3, ''));
         my $data_offset;
         eval "\$data_offset = $bit_string";

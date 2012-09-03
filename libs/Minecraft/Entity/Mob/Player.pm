@@ -1,5 +1,7 @@
 package Minecraft::Entity::Mob::Player;
 
+use Minecraft::NBT;
+
 use Mouse;
 extends 'Minecraft::Entity::Mob';
 
@@ -45,15 +47,16 @@ has 'inventory' => (
     lazy => 1,
 );
 
-has 'score' => (
+has 'xp_total' => (
     is => 'rw',
     isa => 'Maybe[Int]',
     default => sub {
             my $self = shift;
             if (my $data = $self->nbt_data) {
-                my $score_nbt = $data->get_child_by_name('Score');
-                return $score_nbt->payload if $score_nbt;
+                my $xptotal_nbt = $data->get_child_by_name('XpTotal');
+                return $xptotal_nbt->payload if $xptotal_nbt;
             }
+			return undef;
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
@@ -78,6 +81,10 @@ has 'dimension' => (
     lazy => 1,
 );
 
+has 'name' => (
+    is => 'rw',
+    isa => 'Str',
+);
 # checks slots and adds item appropriately, 
 #   with no slot specified, adds to first empty slot if any
 sub add_item {

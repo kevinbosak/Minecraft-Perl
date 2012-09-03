@@ -12,12 +12,11 @@
 - Write Furnace Items
 
 - Less repeating code in Region.pm
-- Timestamp filter
 
 - Check types (32 bit Vs 64 bit, Minecraft::NBT-types or Perl types?)
 
-- Rename all nbt_data variables to 'nbt_data'
+- Rename Map to Level (both class and dir)
 
-- Move Chunk.pm and Region.pm out of Map-dir and remove the dir (update paths)
+- Move all "utility" function from Util to Level(Map), making it "main" class
 
-- Level class (rename Map)
+- Make 'named' and 'compressed' default in NBT-class

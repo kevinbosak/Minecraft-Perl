@@ -50,7 +50,7 @@ has 'offers' => (
             my $self = shift;
             if (my $data = $self->nbt_data) {
 				if(my $nbt = $data->get_child_by_name('Offers')){
-					my $result = [];
+					my @result = ();
 					foreach my $offer_nbt (@{$nbt->get_child_by_name('Recipes')->payload}){
 						my $offerHash = {};
 						if(my $item_nbt = $offer_nbt->get_child_by_name('buy')){
@@ -68,9 +68,9 @@ has 'offers' => (
 						if(my $item_nbt = $offer_nbt->get_child_by_name('maxUses')){
 							$offerHash->{'maxUses'} = $item_nbt->payload;
 						}
-						push $result, $offerHash;						
+						push @result, $offerHash;						
 					}
-					return $result;
+					return \@result;
 				}
             }
 			return undef;
