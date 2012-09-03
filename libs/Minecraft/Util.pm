@@ -9,7 +9,7 @@ Readonly my $ALL_ITEMS => {
     2   => 'grass',
     3   => 'dirt',
     4   => 'cobblestone',
-    5   => 'wood',
+    5   => 'planks',
     6   => 'sapling',
     7   => 'bedrock',
     8   => 'water',
@@ -21,7 +21,7 @@ Readonly my $ALL_ITEMS => {
     14  => 'gold ore',
     15  => 'iron ore',
     16  => 'coal ore',
-    17  => 'log',
+    17  => 'wood',
     18  => 'leaves',
     19  => 'sponge',
     20  => 'glass',
@@ -35,21 +35,23 @@ Readonly my $ALL_ITEMS => {
     28 => 'detector rail',
     29 => 'sticky piston',
     30 => 'cobweb',
-    31 => 'plant',
-    32 => 'dead shrub',
+    31 => 'tall grass',
+    32 => 'dead bush',
     33 => 'piston',
-    35  => 'cloth',
+	34 => 'piston extension',
+    35 => 'wool',
+	36 => 'block moved by piston',
     37  => 'yellow flower',
     38  => 'red flower',
     39  => 'brown mushroom',
     40  => 'red mushroom',
-    41  => 'violet gold block',
+    41  => 'gold block',
     42  => 'iron block',
     43  => 'double slab',
     44  => 'slab',
     45  => 'brick',
     46  => 'TNT',
-    47  => 'bookcase',
+    47  => 'bookshelf',
     48  => 'mossy cobblestone',
     49  => 'obsidian',
     50  => 'torch',
@@ -68,7 +70,7 @@ Readonly my $ALL_ITEMS => {
     63  => 'sign post',
     64  => 'wooden door',
     65  => 'ladder',
-    66  => 'minecart tracks',
+    66  => 'rails',
     67  => 'cobblestone stairs',
     68  => 'wall sign', # hide
     69  => 'lever',
@@ -82,7 +84,7 @@ Readonly my $ALL_ITEMS => {
     77  => 'stone button',
     78  => 'snow',
     79  => 'ice',
-    80  => 'snow',
+    80  => 'snow block',
     81  => 'cactus',
     82  => 'clay', # hide
     83  => 'reed', # hide
@@ -97,7 +99,55 @@ Readonly my $ALL_ITEMS => {
     92 => 'cake block',
     93 => 'redstone repeater',
     94 => 'redstone repeater',
+	95 => 'locked chest',
     96 => 'trapdoor',
+	97 => 'monster egg',
+	98 => 'stone bricks',
+	99 => 'huge brown mushroom',
+	100 => 'huge red mushroom',
+	101 => 'iron bars',
+	102 => 'glass pane',
+	103 => 'melon',
+	104 => 'pumpkin stem',
+	105 => 'melon stem',
+	106 => 'vines',
+	107 => 'fence gate',
+	108 => 'brick stairs',
+	109 => 'stone brick stairs',
+	110 => 'mycelium',
+	111 => 'lily pad',
+	112 => 'nether brick',
+	113 => 'nether brick fence',
+	114 => 'nether brick stairs',
+	115 => 'nether wart',
+	116 => 'enchantment table',
+	117 => 'brewing stand',
+	118 => 'cauldron',
+	119 => 'end portal',
+	120 => 'end portal frame',
+	121 => 'end stone',
+	122 => 'dragon egg',
+	123 => 'active redstone lamp',
+	124 => 'inactive redstone lamp',
+	125 => 'wooden double slab',
+	126 => 'wooden slab',
+	127 => 'cocoa plant',
+	128 => 'sandstone stairs',
+	129 => 'emerald ore',
+	130 => 'ender chest',
+	131 => 'tripwire hook',
+	132 => 'tripwire',
+	133 => 'emerald block',
+	134 => 'spruce stairs',
+	135 => 'birch stairs',
+	136 => 'jungle wood stairs',
+	137 => 'command block',
+	138 => 'beacon block',
+	139 => 'cobblestone wall',
+	140 => 'flower pot',
+	141 => 'carrots',
+	142 => 'potatoes',
+	143 => 'wooden button',
 
     256 => 'iron spade',
     257 => 'iron pickaxe',
@@ -198,10 +248,59 @@ Readonly my $ALL_ITEMS => {
     352 => 'bone',
     353 => 'sugar',
     354 => 'cake',
+	355 => 'bed',
+	356 => 'repeater',
+	357 => 'cookie',
     358 => 'map',
     359 => 'shears',
-    2256 => 'gold music disc',
-    2257 => 'green music disc',
+	360 => 'melon slice',
+	361 => 'pumpkin seeds',
+	362 => 'melon seeds',
+	363 => 'raw beef',
+	364 => 'steak',
+	365 => 'raw chicken',
+	366 => 'cooked chicken',
+	367 => 'rotten flesh',
+	368 => 'ender pearl',
+	369 => 'blaze rod',
+	370 => 'ghast tear',
+	371 => 'gold nugget',
+	372 => 'nether wart',
+	373 => 'potions',
+	374 => 'glass bottle',
+	375 => 'spider eye',
+	376 => 'fermented spider eye',
+	377 => 'blaze powder',
+	378 => 'magma cream',
+	379 => 'brewing stand',
+	380 => 'cauldron',
+	381 => 'eye of ender',
+	382 => 'glistering melon',
+	383 => 'spawn egg',
+	384 => 'bottle of enchanting',
+	385 => 'fire charge',
+	386 => 'book and quill',
+	387 => 'written book',
+	388 => 'emerald',
+	389 => 'item frame',
+	390 => 'flower pot',
+	391 => 'carrots',
+	392 => 'potato',
+	393 => 'baked potato',
+	394 => 'poisonous potato',
+	395 => 'map',
+	396 => 'golden carrot',
+	2256 => '13 disc',
+    2257 => 'cat disc',
+	2258 => 'blocks disc',
+	2259 => 'chirp disc',
+	2260 => 'far disc',
+	2261 => 'mall disc',
+	2262 => 'mellohi disc',
+	2263 => 'stal disc',
+	2264 => 'strad disc',
+	2265 => 'ward disc',
+	2266 => '11 disc',
 };
 
 Readonly my $INVENTORY_ITEMS => [qw(
@@ -236,7 +335,9 @@ Readonly my $INVENTORY_ITEMS => [qw(
     31
     32
     33
-    35  
+	34
+    35
+	36	
     37  
     38  
     39  
@@ -281,6 +382,8 @@ Readonly my $INVENTORY_ITEMS => [qw(
     91
     92
     93
+	94
+	95
     96
 
     256 
@@ -458,6 +561,15 @@ Readonly my $DYES => [
     'bone meal',
 ];
 
+Readonly my $PROFESSIONS => [
+	'Farmer',
+	'Librarian',
+	'Priest',
+	'Blacksmith',
+	'Butcher',
+	'Villager',
+];
+
 # FIXME: need some way to denote damage is used for wool color
 
 sub item_has_damage {
@@ -493,7 +605,19 @@ sub get_item_name {
     if ($id eq __PACKAGE__) {
         $id = shift;
     }
-    return $ITEMS->{$id};
+	my $return = $ALL_ITEMS->{$id};
+	if(!$return){$return="<unknown($id)>";}
+    return $return;
+}
+
+sub get_profession {
+    my $id = shift;
+    if ($id eq __PACKAGE__) {
+        $id = shift;
+    }
+	my $return = $PROFESSIONS->[$id];
+	if(!$return){$return="<unknown profession($id)>";}
+    return $return;
 }
 
 sub get_item_id {
