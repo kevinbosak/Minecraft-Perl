@@ -2,7 +2,7 @@ package Minecraft::InventoryItem;
 
 use Mouse;
 
-has 'inventory_nbt_data' => (
+has 'nbt_data' => (
     is => 'rw',
     isa => 'Minecraft::NBT::Compound',
 );
@@ -12,14 +12,14 @@ has 'id' => (
     isa => 'Int',
     default => sub {
             my $self = shift;
-            if (my $data = $self->inventory_nbt_data) {
+            if (my $data = $self->nbt_data) {
                 my $id =$data->get_child_by_name('id');
                 return $id->payload;
             }
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $data = $self->inventory_nbt_data) {
+            if (my $data = $self->nbt_data) {
 	            $data->get_child_by_name('id')->payload($new_val);
             }
         },
@@ -31,7 +31,7 @@ has 'damage' => (
     isa => 'Maybe[Int]',
     default => sub {
             my $self = shift;
-            if (my $data = $self->inventory_nbt_data) {
+            if (my $data = $self->nbt_data) {
                 my $damage =$data->get_child_by_name('Damage');
                 return $damage->payload if $damage;
             }
@@ -39,7 +39,7 @@ has 'damage' => (
     trigger => sub {
             # FIXME: create NBT item if it doesn't already exist
             my ($self, $new_val, $old_val) = @_;
-            if (my $data = $self->inventory_nbt_data) {
+            if (my $data = $self->nbt_data) {
 	            $data->get_child_by_name('Damage')->payload($new_val);
             }
         },
@@ -51,13 +51,13 @@ has 'count' => (
     isa => 'Int',
     default => sub {
             my $self = shift;
-            if (my $data = $self->inventory_nbt_data) {
+            if (my $data = $self->nbt_data) {
                 return $data->get_child_by_name('Count')->payload;
             }
         },
     trigger => sub {
             my ($self, $new_val, $old_val) = @_;
-            if (my $data = $self->inventory_nbt_data) {
+            if (my $data = $self->nbt_data) {
 	            $data->get_child_by_name('Count')->payload($new_val);
             }
         },
@@ -68,23 +68,26 @@ has 'slot' => (
     isa => 'Maybe[Int]',
     default => sub {
             my $self = shift;
-            if (my $data = $self->inventory_nbt_data) {
-                return $data->get_child_by_name('Slot')->payload;
+            if (my $data = $self->nbt_data) {
+				my $slot = $data->get_child_by_name('Slot');
+                return $slot->payload if $slot;
             }
+			return undef;
         },
     trigger => sub {
             # FIXME: create NBT item if it doesn't already exist
             my ($self, $new_val, $old_val) = @_;
-            if (my $data = $self->inventory_nbt_data) {
+            if (my $data = $self->nbt_data) {
 	            $data->get_child_by_name('Slot')->payload($new_val);
             }
         },
 );
 
+#TODO Remove this? Why is this needed?
 around BUILDARGS => sub {
     my ($orig, $class, $args) = @_;
 
-    if (!$args->{inventory_nbt_data}) {
+    if (!$args->{nbt_data}) {
         require Minecraft::NBT::Compound;
         require Minecraft::NBT::Short;
         require Minecraft::NBT::Byte;
@@ -103,7 +106,7 @@ around BUILDARGS => sub {
             my $slot = Minecraft::NBT::Byte->new({name => 'Slot', payload => $args->{slot}});
             $nbt_data->add_child($slot);
         }
-        $args->{inventory_nbt_data} = $nbt_data;
+        $args->{nbt_data} = $nbt_data;
     }
     return $class->$orig($args);
 };

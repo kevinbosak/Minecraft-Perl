@@ -33,9 +33,10 @@ require Minecraft::NBT::Long;
 require Minecraft::NBT::Float;
 require Minecraft::NBT::Double;
 require Minecraft::NBT::ByteArray;
+require Minecraft::NBT::String;
 require Minecraft::NBT::List;
 require Minecraft::NBT::Compound;
-require Minecraft::NBT::String;
+require Minecraft::NBT::IntArray;
 
 Readonly my %TYPES => (
      0 => 'TAG_END',
@@ -49,6 +50,7 @@ Readonly my %TYPES => (
      8 => 'TAG_STRING',
      9 => 'TAG_LIST',
     10 => 'TAG_COMPOUND',
+	11 => 'TAG_INT_ARRAY',
 );
 
 sub types_hash {
@@ -97,26 +99,29 @@ sub parse_data {
     die "No data given" unless $$data && length($$data);
 
     my $tag_type = $args->{tag_type};
-
+	
     my $tag_data = {};
     # get the tag name
 
-    my $has_name = $args->{is_named};
+    
     if (!defined $tag_type) {
         my $type_data = parse_data({data => $data, tag_type => string_to_type('TAG_BYTE')});
         $tag_type = $type_data->payload;
     }
+	
     die "NO TAG TYPE" unless defined $tag_type;
 
     return if type_to_string($tag_type) eq 'TAG_END';
-
+	
+	my $has_name = $args->{is_named};
     # get the tag's name
     if ($has_name) {
         my $name_data = parse_data({data => $data, tag_type => string_to_type('TAG_STRING')});
         my $tag_name = $name_data->payload;
         $tag_data->{name} = $tag_name;
-    }
-
+		#print type_to_string($tag_type).":'$tag_name'\n";
+    }	
+	
     # get the payload
     my $payload;
     if (type_to_string($tag_type) eq 'TAG_COMPOUND') {
@@ -163,7 +168,14 @@ sub parse_data {
         my $payload_data = substr($$data, 0, $length, '');
         $payload = $payload_data;
 
-    } elsif (type_to_string($tag_type) eq 'TAG_STRING') {
+    } elsif (type_to_string($tag_type) eq 'TAG_INT_ARRAY') {
+        my $length_data = parse_data({data => $data, tag_type => string_to_type('TAG_INT')});
+        my $length = $length_data->payload;
+		
+        my $payload_data = substr($$data, 0, $length * 4, '');
+		($payload) = [unpack("N*",$payload_data)];
+	
+	} elsif (type_to_string($tag_type) eq 'TAG_STRING') {
         my $length_data = parse_data({data => $data, tag_type => string_to_type('TAG_SHORT')});
         my $length = $length_data->payload;
 

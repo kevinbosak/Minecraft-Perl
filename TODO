@@ -1,0 +1,22 @@
+- Read Add from Sections
+- Calculate Data Values by adding the Add-tag
+- Read Data from Sections
+- Read BlockLight from Sections
+- Read SkyLight from Sections
+
+- Write Blocks to Sections
+- Write Add to Sections
+- Write Data to Sections
+- Write BlockLight to Sections
+- Write SkyLight to Sections
+- Write Furnace Items
+
+- Less repeating code in Region.pm
+
+- Check types (32 bit Vs 64 bit, Minecraft::NBT-types or Perl types?)
+
+- Rename Map to Level (both class and dir)
+
+- Move all "utility" function from Util to Level(Map), making it "main" class
+
+- Make 'named' and 'compressed' default in NBT-class
